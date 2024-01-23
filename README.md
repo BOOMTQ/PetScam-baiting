@@ -7,4 +7,6 @@ The online pet scam is an increasingly sophisticated threat that can cause emoti
 ## Pet scam websites
 On https://petscams.com/, which have listed known pet scam and delivery scam websites, is still in real-time updates.
 
-## Pet scam process
+## Basic process of project
+Project will involve creating a new process that acts as a sort of 'crawler', visiting pet scam sites and arranging for them to contact personalities created by the bot. It will probably has to make changes to other parts of the system to make this work smoothly, and for the experiments it'll want to disable the previous crawlers. To accomplish all this will need to get very familiar with the codebase, so getting a version of it running early on will be important.
+该项目将涉及创建一个新进程，作为一种 "爬虫"，访问宠物诈骗网站，并安排它们与机器人创建的角色联系。可能需要对系统的其他部分进行修改，以使其顺利运行，而且在实验中，需要禁用以前的爬虫。要完成这些工作，需要非常熟悉代码库，因此尽早运行一个版本将非常重要。
