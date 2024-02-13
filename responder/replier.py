@@ -1,13 +1,11 @@
 import os.path
-import random
 import re
 from abc import ABC, abstractmethod
 
 from text_utils.text_filter import *
-from .Chatgpt_Replier import gen_text1, gen_text2
-from .gen import gen_text
-from .classifier import classify
-from secret import MAIL_ARCHIVE_DIR, TEMPLATES_DIR  # NEO_ENRON_PATH, NEO_RAW_PATH,
+from .Chatgpt_Replier import investigator, newbies, bargainer, impatient
+
+from secret import MAIL_ARCHIVE_DIR
 
 text_filters = [
     RemoveSymbolLineTextFilter(),
@@ -48,62 +46,37 @@ class Replier(ABC):
         return self.get_reply(content + "\n[bait_start]\n")
 
 
-# class NeoEnronReplier(Replier):
-#     name = "NeoEnron"
-#
-#     def _gen_text(self, prompt) -> str:
-#         print(f"Generating reply using {self.name}")
-#         return gen_text(NEO_ENRON_PATH, prompt)
-#
-#
-# class NeoRawReplier(Replier):
-#     name = "NeoRaw"
-#
-#     def _gen_text(self, prompt) -> str:
-#         print(f"Generating reply using {self.name}")
-#         return gen_text(NEO_RAW_PATH, prompt)
-#
-
-class ClassifierReplier(Replier):
-    name = "Classifier"
-
-    def _gen_text(self, prompt):
-        scam_type = classify(prompt)  # 分类诈骗邮件
-        template_dir = os.path.join(TEMPLATES_DIR, scam_type)
-        target_filename = random.choice(os.listdir(template_dir))
-
-        with open(os.path.join(template_dir, target_filename), "r", encoding="utf8") as f:
-            res = f.read()
-
-        return res + "[bait_end]"
-
-
-class TemplateReplier(Replier):
-    name = "Template"
-
-    def _gen_text(self, prompt) -> str:
-        template_dir = os.path.join(TEMPLATES_DIR, random.choice(os.listdir(TEMPLATES_DIR)))
-        target_filename = random.choice(os.listdir(template_dir))
-
-        with open(os.path.join(template_dir, target_filename), "r", encoding="utf8") as f:
-            res = f.read()
-
-        return res + "[bait_end]"
-
-
 class ChatReplier1(Replier):
-    name = "Chat1"
+    name = "Investigator"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")
-        res = gen_text1(prompt)
+        res = investigator(prompt)
         return res + "[bait_end]"
 
 
 class ChatReplier2(Replier):
-    name = "Chat2"
+    name = "Newbies"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")
-        res = gen_text2(prompt)
+        res = newbies(prompt)
+        return res + "[bait_end]"
+
+
+class ChatReplier3(Replier):
+    name = "Bargainer"
+
+    def _gen_text(self, prompt) -> str:
+        print(f"Generating reply using {self.name}")
+        res = bargainer(prompt)
+        return res + "[bait_end]"
+
+
+class ChatReplier4(Replier):
+    name = "ImpatientConsumer"
+
+    def _gen_text(self, prompt) -> str:
+        print(f"Generating reply using {self.name}")
+        res = impatient(prompt)
         return res + "[bait_end]"
