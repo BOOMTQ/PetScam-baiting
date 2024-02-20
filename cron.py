@@ -16,8 +16,7 @@ from archiver import archive
 def main(crawl=True):
 # def main():
     if crawl:
-        # crawler.fetch_all() # fetch all the crawlers
-        pass
+        crawler.fetch_all() # fetch all the crawlers
 
     # Handle incoming emails
     email_filenames = os.listdir(MAIL_SAVE_DIR)
