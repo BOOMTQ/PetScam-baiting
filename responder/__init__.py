@@ -3,9 +3,9 @@ import os
 from collections import namedtuple, defaultdict
 
 from secret import MODEL_HISTORY_PATH
-from responder.replier import Replier, ChatReplier1, ChatReplier2, ChatReplier3, ChatReplier4 # NeoEnronReplier, NeoRawReplier
+from responder.replier import Replier, ChatReplier1, ChatReplier2, ChatReplier3, ChatReplier4
 
-replier_list = [ChatReplier1(), ChatReplier2(), ChatReplier3(), ChatReplier4()]  # [ClassifierReplier(), NeoEnronReplier(), NeoRawReplier()]
+replier_list = [ChatReplier1(), ChatReplier2(), ChatReplier3(), ChatReplier4()]
 
 ReplyResult = namedtuple("ReplyResult", ["name", "text"])
 

@@ -14,9 +14,9 @@ from archiver import archive
 
 
 def main(crawl=True):
-# def main():
     if crawl:
-        crawler.fetch_all() # fetch all the crawlers
+        crawler.crawl_all() # run all the crawlers first
+        # pass
 
     # Handle incoming emails
     email_filenames = os.listdir(MAIL_SAVE_DIR)
@@ -106,6 +106,8 @@ def main(crawl=True):
                 print(traceback.format_exc())
         else:
             break
+    else:
+        print("No more emails to reply, please try to get new income emails from mailgun")
 
 
 if __name__ == '__main__':
@@ -118,7 +120,5 @@ if __name__ == '__main__':
 
     arg_crawl = not ("--no-crawl" in sys.argv)
     main(crawl=arg_crawl)
-    # main()
     os.remove("./lock")
 
-# main()

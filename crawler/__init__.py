@@ -1,7 +1,6 @@
-from crawler import scamletterinfo
-from crawler import scamsurvivors
+from crawler import email_crawler
 
 
-def fetch_all():
-    scamletterinfo.fetch()
-    scamsurvivors.fetch()
+def crawl_all():
+    email_crawler.get_mailgun_logs()
+

@@ -28,5 +28,5 @@ def send_email(username, address, target, subject, text):
 
 
 if __name__ == '__main__':
-    print(send_email("HelloTester", "postmaster@liveonline.ninja", "xitone5727@alibrs.com", "==Test==",
+    print(send_email("HelloTester", "postmaster@example.com", "xitone5727@alibrs.com", "==Test==",
                      "Test these fucking stuff"))
