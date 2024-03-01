@@ -1,11 +1,8 @@
-import os
 import openai
-import tiktoken
-import json
 import re
 from secret import OPENAI_API_KEY
 
-openai.api_key = OPENAI_API_KEY  # os.getenv("OPENAI_API_KEY")
+openai.api_key = OPENAI_API_KEY
 
 
 def investigator(prompt):

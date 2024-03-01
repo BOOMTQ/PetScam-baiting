@@ -15,7 +15,7 @@ from archiver import archive
 
 def main(crawl=True):
     if crawl:
-        crawler.crawl_all() # run all the crawlers first
+        crawler.crawl_all()  # run all the crawlers first
         # pass
 
     # Handle incoming emails
@@ -59,7 +59,7 @@ def main(crawl=True):
                     replier = responder.get_replier_randomly()
                     bait_email = solution_manager.gen_new_addr(scam_email, replier.name)
                     stored_info = solution_manager.get_stored_info(bait_email, scam_email)
-                else: #已经存在bait_email，并且被使用来回复scam_email
+                else:  # 已经存在bait_email，并且被使用来回复scam_email
                     bait_email = email_obj["bait_email"]
                     stored_info = solution_manager.get_stored_info(bait_email, scam_email)
 
@@ -121,4 +121,3 @@ if __name__ == '__main__':
     arg_crawl = not ("--no-crawl" in sys.argv)
     main(crawl=arg_crawl)
     os.remove("./lock")
-

@@ -25,7 +25,7 @@ def addr_exists(addr) -> bool:
     return False
 
 
-def scam_exists(addr) -> bool: #判断scam_email是否已经被回复，有record表示已经回复
+def scam_exists(addr) -> bool:
     with open(ADDR_SOL_PATH, "r", encoding="utf8") as f:
         d = json.load(f)
 
