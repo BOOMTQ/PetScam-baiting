@@ -3,19 +3,25 @@ from selenium.common import TimeoutException, ElementNotInteractableException, N
 from selenium.webdriver.chrome.service import Service
 import time
 import random
-
+import names
+import json
+import os
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
+from secret import CRAWLER_PROG_DIR
 
 from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
-import json
+
+from solution_manager import get_random_addr
+
+driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
+service = Service(executable_path=driver_path)
+driver = webdriver.Chrome(service=service)
 
 
-def find_elements_by_match(targets, element_tags=None,
-                           score_threshold=70):
+def find_elements_by_match(targets, element_tags=None, score_threshold=70):
     if element_tags is None:
         element_tags = ['input', 'textarea', 'select', 'label', 'text']
     found_elements = {}
@@ -75,7 +81,6 @@ def find_elements_by_match(targets, element_tags=None,
                         matched_element = elem
                         highest_score = score
 
-        # After all checks,
         if highest_score >= score_threshold and matched_element:
             found_elements[target] = matched_element
 
@@ -90,7 +95,7 @@ def select_random_checkbox():
 
         if interactable_checkboxes:
             checkbox = random.choice(interactable_checkboxes)
-            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, checkbox.get_attribute('id'))))
+            WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.ID, checkbox.get_attribute('id'))))
             checkbox.click()
     except TimeoutException:
         print("Timeout waiting for the checkbox to become clickable.")
@@ -107,7 +112,7 @@ def select_random_option():
         for select_element in select_elements:
             if select_element.is_displayed() and select_element.is_enabled():
                 select_object = Select(select_element)
-                wait = WebDriverWait(driver, 5)
+                wait = WebDriverWait(driver, 4)
                 wait.until(EC.element_to_be_clickable((By.TAG_NAME, 'option')))
 
                 option_indexes = list(range(len(select_object.options)))
@@ -119,52 +124,79 @@ def select_random_option():
         print(f"An error occurred while selecting an option: {e}")
 
 
-def autofill_form():
-    fields_to_match = ["name", "phone number", "email", "address", "state", "city", "subject", "message", "Kitten",
-                       "Puppy"]
-    matched_elements = find_elements_by_match(fields_to_match)
+def generate_phone():  # phone range include European countries and US
+    # EU or US format
+    if random.choice([True, False]):
+        # EU format (country code + area code + local number)
+        country_code = random.choice(['+49', '+33', '+39', '+34', '+48', '+44', '+31', '+32', '+46', '+47', '+358']) # country codes
+        area_code = random.randint(100, 999)
+        local_number = random.randint(1000, 9999)
+        return f"{country_code} {area_code} {local_number}"
+    else:
+        # US format (3-digit area code + 3-digit exchange code + 4-digit subscriber number)
+        area_code = random.randint(200, 999)
+        exchange = random.randint(200, 999)
+        subscriber = random.randint(1000, 9999)
+        return f"({area_code}) {exchange}-{subscriber}"
 
-    data = {
-        "name": "John Doe",
-        "phone number": "1234567890",
-        "email": "john.doe@example.com",
-        "address": "123 Main St",
-        "state": "NY",
-        "city": "New York",
-        "subject": "Inquiry",
-        "message": "Hi, I am interested with your pet, could you please contact me as soon as possible?",
-        "Kitten": "Whiskers",
-        "Puppy": "Spot"
-    }
 
-    for field_name, field_element in matched_elements.items():
-        if field_element and field_name in data:
+def generate_address():  # address range include European countries and US
+    # EU
+    if random.choice([True, False]):
+        number = random.randint(1, 200)
+        street_names = ['High', 'Church', 'London', 'Victory', 'Kings', 'Queens', 'Green']
+        street_types = ['Street', 'Road', 'Way', 'Place', 'Lane']
+        postcode = random.randint(10000, 99999)
+        return f"{number} {random.choice(street_names)} {random.choice(street_types)}, {postcode}"
+    else:
+        # US
+        number = random.randint(100, 9999)
+        street_names = ['Main', 'Oak', 'Pine', 'Maple', 'Cedar', 'Elm', 'Willow']
+        street_types = ['St', 'Ave', 'Blvd', 'Rd', 'Dr', 'Ln']
+        return f"{number} {random.choice(street_names)} {random.choice(street_types)}"
+
+
+def generate_city():  # real city names in EU and US
+    cities = [
+        'Springfield', 'Columbus', 'Phoenix', 'Austin', 'Jacksonville',  # US Cities
+        'Berlin', 'Munich', 'Hamburg',  # German Cities
+        'Paris', 'Marseille', 'Lyon',  # French Cities
+        'Rome', 'Milan', 'Naples',  # Italian Cities
+        'Madrid', 'Barcelona', 'Valencia',  # Spanish Cities
+        'Warsaw', 'Krakow', 'Wroclaw',  # Polish Cities
+        'London', 'Birmingham', 'Manchester',  # UK Cities
+        'Amsterdam', 'Rotterdam', 'The Hague',  # Dutch Cities
+        'Brussels', 'Antwerp', 'Bruges',  # Belgian Cities
+        'Stockholm', 'Gothenburg', 'Malmö',  # Swedish Cities
+        'Oslo', 'Bergen', 'Trondheim',  # Norwegian Cities
+        'Helsinki', 'Espoo', 'Tampere',  # Finnish Cities
+    ]
+    return random.choice(cities)
+
+
+def save_to_cache(email, username, url):
+    cache_file_path = CRAWLER_PROG_DIR
+    if not os.path.exists(os.path.dirname(cache_file_path)):
+        os.makedirs(os.path.dirname(cache_file_path))
+
+    cache_data = []
+    if os.path.exists(cache_file_path):
+        with open(cache_file_path, 'r') as file:
             try:
-                wait = WebDriverWait(driver, timeout=5)
-                wait.until(EC.visibility_of(field_element))
-                field_element.send_keys(data[field_name])
-            except Exception as e:
-                print(f"Error interacting with field: {field_name}, error: {e}")
+                cache_data = json.load(file)
+                if not isinstance(cache_data, list):
+                    raise ValueError("Cache data is not a list")
+            except json.JSONDecodeError:
+                cache_data = []
 
-    select_random_checkbox()
-    select_random_option()
-    time.sleep(5)
+    cache_data.append({
+        "bait_email": email,
+        "username": username,
+        "url": url
+    })
 
-    try:
-        submit_button = driver.find_element(By.CSS_SELECTOR,
-                                            'button[type="submit"], input[type="submit"]')
-        if submit_button:
-            submit_button.click()
-            print("Form submitted successfully!")
-        else:
-            print("Submit button not found")
-        # WebDriverWait(driver, 3).until(
-        #     EC.presence_of_element_located((By.CSS_SELECTOR, "div.wpcf7-mail-sent-ok"))
-        # )
-        # print("Form submitted successfully!")
-    except TimeoutException:
-        print("Form submission failed or confirmation not found.")
-    pass
+    with open(cache_file_path, 'w') as file:
+        json.dump(cache_data, file, indent=4)
 
 
 def read_urls_from_json(file_path):
@@ -177,15 +209,66 @@ def write_urls_to_json(file_path, url_list):
         json.dump(url_list, file, indent=4)
 
 
-driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
-service = Service(executable_path=driver_path)
-driver = webdriver.Chrome(service=service)
+def autofill_form():
+    data = {}
+    fields_to_match = ["name", "phone number", "email", "address", "state", "city", "state/city", "subject", "message",
+                       "Kitten", "Puppy"]
+    matched_elements = find_elements_by_match(fields_to_match)
+
+    email = get_random_addr()
+    username = names.get_first_name()
+
+    data.update({
+        "name": username,
+        "phone number": generate_phone(),
+        "email": email,
+        "address": generate_address(),
+        "subject": "Inquiry",
+        "message": "Hi, I am interested with your pet, could you please contact me as soon as possible?",
+        "Kitten": "Whiskers",
+        "Puppy": "Spot"
+    })
+
+    # Check if the form has "state/city" combined field
+    if "state/city" in fields_to_match:
+        data["state/city"] = generate_city()  # Call only generate_random_city
+    else:
+        data["state"] = generate_city()
+        data["city"] = generate_city()
+
+    for field_name, field_element in matched_elements.items():
+        if field_element and field_name in data:
+            try:
+                wait = WebDriverWait(driver, timeout=4)
+                wait.until(EC.visibility_of(field_element))
+                field_element.send_keys(data[field_name])
+            except Exception as e:
+                print(f"Error interacting with field: {field_name}, error: {e}")
+
+    select_random_checkbox()
+    select_random_option()
+    time.sleep(4)
+
+    try:
+        submit_button = driver.find_element(By.CSS_SELECTOR,
+                                            'button[type="submit"], input[type="submit"]')
+        if submit_button:
+            submit_button.click()
+            current_url = driver.current_url
+            save_to_cache(username, email, current_url)
+            print("Form submitted successfully!")
+        else:
+            print("Submit button not found")
+        # WebDriverWait(driver, 3).until(
+        #     EC.presence_of_element_located((By.CSS_SELECTOR, "div.wpcf7-mail-sent-ok"))
+        # )
+        # print("Form submitted successfully!")
+    except TimeoutException:
+        print("Form submission failed or confirmation not found.")
+    pass
+
 
 if __name__ == '__main__':
-
-    # urls = ['http://localhost:8080/RoyalBoxersHome.html',
-    # 'http://localhost:8080/AmericanBullyPuppyParadise.html', 'http://localhost:8080/ShiraDachshunds.html',]
-
     input_file = 'urls/input_urls.json'
     urls = read_urls_from_json(input_file)
 
@@ -196,11 +279,11 @@ if __name__ == '__main__':
         try:
             driver.get(url)
             autofill_form()
-            success_urls.append(url)  # 如果没有异常发生，则添加到成功列表
-            time.sleep(3)
+            success_urls.append(url)
+            time.sleep(2)
         except Exception as e:
             print(f"An error occurred with {url}: {e}")
-            fail_urls.append(url)  # 如果有异常发生，则添加到失败列表
+            fail_urls.append(url)
             continue
 
     driver.quit()
