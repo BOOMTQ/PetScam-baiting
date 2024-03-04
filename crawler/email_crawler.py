@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 from os import listdir
 from os.path import isfile, join
-from secret import API_KEY, API_BASE_URL, MAIL_SAVE_DIR
+from secret import API_KEY, API_BASE_URL
 from email.utils import parsedate_to_datetime
 import time
 
