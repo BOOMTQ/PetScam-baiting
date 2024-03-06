@@ -57,10 +57,10 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["name", "full name", "first name", "last name", "your name"],
-                "placeholder": ["name", "full name", "first name", "last name", "your name"],
-                "name": ["name", "full name", "first name", "last name", "your name"],
-                "id": ["name", "full name", "first name", "last name", "your name"]
+                "data-name": ["name", "full name", "first name", "last name", "your name", "names"],
+                "placeholder": ["name", "full name", "first name", "last name", "your name", "names"],
+                "name": ["name", "full name", "first name", "last name", "your name", "names"],
+                "id": ["name", "full name", "first name", "last name", "your name", "names"]
             }
         },
         "phone number": {
@@ -238,7 +238,7 @@ def select_random_checkbox():
 
         if interactable_checkboxes:
             checkbox = random.choice(interactable_checkboxes)
-            WebDriverWait(driver, 4).until(EC.element_to_be_clickable((By.ID, checkbox.get_attribute('id'))))
+            WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.ID, checkbox.get_attribute('id'))))
             checkbox.click()
     except TimeoutException:
         print("Timeout waiting for the checkbox to become clickable.")
@@ -255,7 +255,7 @@ def select_random_option():
         for select_element in select_elements:
             if select_element.is_displayed() and select_element.is_enabled():
                 select_object = Select(select_element)
-                wait = WebDriverWait(driver, 4)
+                wait = WebDriverWait(driver, 5)
                 wait.until(EC.element_to_be_clickable((By.TAG_NAME, 'option')))
 
                 option_indexes = list(range(len(select_object.options)))
@@ -267,8 +267,7 @@ def select_random_option():
         print(f"An error occurred while selecting an option: {e}")
 
 
-def generate_phone():  # phone range include European countries and US
-    # EU or US format
+def generate_phone():
     if random.choice([True, False]):
         # EU format (country code + area code + local number)
         country_code = random.choice(
@@ -284,7 +283,7 @@ def generate_phone():  # phone range include European countries and US
         return f"({area_code}) {exchange}-{subscriber}"
 
 
-def generate_address():  # address range include European countries and US
+def generate_address():
     # EU
     if random.choice([True, False]):
         number = random.randint(1, 200)
@@ -300,7 +299,7 @@ def generate_address():  # address range include European countries and US
         return f"{number} {random.choice(street_names)} {random.choice(street_types)}"
 
 
-def generate_city():  # real city names in EU and US
+def generate_city():
     cities = [
         'Springfield', 'Columbus', 'Phoenix', 'Austin', 'Jacksonville',  # US Cities
         'Berlin', 'Munich', 'Hamburg',  # German Cities
@@ -380,8 +379,6 @@ def write_urls_to_json(file_path, url_list):
 
 def autofill_form():
     data = {}
-    fields_to_match = ["name", "phone number", "email", "address", "state", "city", "state/city", "subject", "message",
-                       "Kitten", "Puppy", "Dog Breed", "Cat Breed"]
     matched_elements = filter_elements()
 
     email = get_random_addr()
@@ -392,6 +389,7 @@ def autofill_form():
         "phone number": generate_phone(),
         "email": email,
         "address": generate_address(),
+        "state/city": generate_city(),
         "subject": "Inquiry",
         "message": "Hi, I am interested with your pet, could you please contact me as soon as possible?",  # use gpt API
         "Kitten": generate_kitten(),
@@ -400,17 +398,10 @@ def autofill_form():
         "Cat Breed": generate_kitten_breed()
     })
 
-    # Check if the form has "state/city" combined field
-    if "state/city" in fields_to_match:
-        data["state/city"] = generate_city()  # Call only generate_random_city
-    else:
-        data["state"] = generate_city()
-        data["city"] = generate_city()
-
     for field_name, field_element in matched_elements.items():
         if field_element and field_name in data:
             try:
-                wait = WebDriverWait(driver, timeout=4)
+                wait = WebDriverWait(driver, timeout=5)
                 wait.until(EC.visibility_of(field_element))
                 field_element.send_keys(data[field_name])
             except Exception as e:
@@ -418,24 +409,21 @@ def autofill_form():
 
     select_random_checkbox()
     select_random_option()
-    time.sleep(4)
+    time.sleep(3)
 
-    try:
-        submit_button = driver.find_element(By.CSS_SELECTOR,
-                                            'button[type="submit"], input[type="submit"]')
-        if submit_button:
-            submit_button.click()
-            current_url = driver.current_url
-            save_to_cache(username, email, current_url)
-            WebDriverWait(driver, 3).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, "div.wpcf7-mail-sent-ok"))
-            )
-            print("Form submitted successfully!")
-        else:
-            print("Submit button not found")
-
-    except TimeoutException:
-        print("Form submission failed or confirmation not found.")
+    # try:
+    #     submit_button = driver.find_element(By.CSS_SELECTOR,
+    #                                         'button[type="submit"], input[type="submit"]')
+    #     if submit_button:
+    #         submit_button.click()
+    #         current_url = driver.current_url
+    #         save_to_cache(username, email, current_url)
+    #         print("Form submitted successfully!")
+    #     else:
+    #         print("Submit button not found")
+    #
+    # except TimeoutException:
+    #     print("Form submission failed or confirmation not found.")
     pass
 
 
