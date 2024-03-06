@@ -128,7 +128,8 @@ def generate_phone():  # phone range include European countries and US
     # EU or US format
     if random.choice([True, False]):
         # EU format (country code + area code + local number)
-        country_code = random.choice(['+49', '+33', '+39', '+34', '+48', '+44', '+31', '+32', '+46', '+47', '+358']) # country codes
+        country_code = random.choice(
+            ['+49', '+33', '+39', '+34', '+48', '+44', '+31', '+32', '+46', '+47', '+358'])  # country codes
         area_code = random.randint(100, 999)
         local_number = random.randint(1000, 9999)
         return f"{country_code} {area_code} {local_number}"
@@ -174,6 +175,30 @@ def generate_city():  # real city names in EU and US
     return random.choice(cities)
 
 
+def generate_kitten():
+    kittenname = ['SNOW', 'CHLOE', 'KIARA', 'WINSTON', 'NEO', 'ELINA', 'RUBY', 'RIVER', 'Chleo', 'Luke', 'Ella', 'Joy',
+                  'Nick', 'Joel', 'Platon', 'Brie', 'Ozzy']
+    return random.choice(kittenname)
+
+
+def generate_puppy():
+    puppyname = ['ELENA', 'NORA', 'AMELIA', 'SALLY', 'OZEN', 'LEO', 'CARL', 'MARK', 'Emma', 'SUSU', 'SOPHIE', 'LAURA',
+                 'MACKO', 'TERRO', 'PRINCE', 'WILLY', 'LOVI', 'JAX', 'SUZY', 'MAX']
+    return random.choice(puppyname)
+
+
+def generate_dog_breed():
+    breed = ['French Bulldog', 'Pomeranian', 'Siberian Husky', 'Akita Inu', 'Labrador Retriever', 'German Shepherd',
+             'Golden Retriever', 'Beagle', 'Poodle', 'Dachshund', 'Doberman Pinscher', 'Australian Shepherd']
+    return random.choice(breed)
+
+
+def generate_kitten_breed():
+    breed = ['Chinese Li Hua', 'Persian', 'Siamese', 'Bengal', 'British Shorthair', 'Maine Coon', 'Ragdoll', 'Scottish Fold',
+             'Sphynx', 'Russian Blue', 'Norwegian Forest Cat', ]
+    return random.choice(breed)
+
+
 def save_to_cache(email, username, url):
     cache_file_path = CRAWLER_PROG_DIR
     if not os.path.exists(os.path.dirname(cache_file_path)):
@@ -212,7 +237,7 @@ def write_urls_to_json(file_path, url_list):
 def autofill_form():
     data = {}
     fields_to_match = ["name", "phone number", "email", "address", "state", "city", "state/city", "subject", "message",
-                       "Kitten", "Puppy"]
+                       "Kitten", "Puppy", "Dog Breed", "Cat Breed"]
     matched_elements = find_elements_by_match(fields_to_match)
 
     email = get_random_addr()
@@ -224,9 +249,11 @@ def autofill_form():
         "email": email,
         "address": generate_address(),
         "subject": "Inquiry",
-        "message": "Hi, I am interested with your pet, could you please contact me as soon as possible?",
-        "Kitten": "Whiskers",
-        "Puppy": "Spot"
+        "message": "Hi, I am interested with your pet, could you please contact me as soon as possible?",  # use gpt API
+        "Kitten": generate_kitten(),
+        "Puppy": generate_puppy(),
+        "Dog Breed": generate_dog_breed(),
+        "Cat Breed": generate_kitten_breed()
     })
 
     # Check if the form has "state/city" combined field
