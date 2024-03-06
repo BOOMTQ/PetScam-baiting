@@ -1,3 +1,5 @@
+import traceback
+
 from selenium import webdriver
 from selenium.common import TimeoutException, ElementNotInteractableException, NoSuchElementException
 from selenium.webdriver.chrome.service import Service
@@ -13,7 +15,7 @@ from secret import CRAWLER_PROG_DIR
 
 from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
-
+from tqdm import tqdm
 from solution_manager import get_random_addr
 
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
@@ -21,70 +23,211 @@ service = Service(executable_path=driver_path)
 driver = webdriver.Chrome(service=service)
 
 
-def find_elements_by_match(targets, element_tags=None, score_threshold=70):
-    if element_tags is None:
-        element_tags = ['input', 'textarea', 'select', 'label', 'text']
-    found_elements = {}
+def get_parent_element(element):
+    parent_element = driver.execute_script("return arguments[0].parentNode;", element)
+    return parent_element
 
-    # Fetch all elements once to avoid repeated calls to driver.find_elements
-    elements = {tag: driver.find_elements(By.TAG_NAME, tag) for tag in element_tags}
 
-    # Loop over each target field to find matching elements
-    for target in targets:
-        matched_element = None
-        highest_score = 0
+def get_parent_element_text_iter(element, depth=2):
+    if depth < 0:
+        return ''
+    parent_element = get_parent_element(element)
+    if parent_element.text != '':
+        return parent_element.text
+    else:
+        return get_parent_element_text_iter(parent_element, depth=depth - 1)
 
-        # Check for matching elements by 'name', 'aria-label', 'placeholder', 'data-aid'
-        for element_tag, elems in elements.items():
-            # Check 'name' attribute first
-            for elem in elems:
-                name = elem.get_attribute('name')
-                if name:
-                    score = process.extractOne(target, [name])[1]
-                    if score > highest_score:
-                        matched_element = elem
-                        highest_score = score
 
-        # If 'name' attribute did not match well, check for 'aria-label' in labels
-        if highest_score < score_threshold:
-            labels = driver.find_elements(By.XPATH, "//label[@aria-label]")
-            for label in labels:
-                aria_label = label.get_attribute('aria-label')
-                if aria_label:
-                    score = process.extractOne(target, [aria_label])[1]
-                    if score > highest_score:
-                        # Get the corresponding input element by the 'id' that the label is for
-                        elem_id = label.get_attribute('for')
-                        try:
-                            input_element = driver.find_element(By.ID, elem_id)
-                            matched_element = input_element
-                            highest_score = score
-                        except NoSuchElementException:
-                            # Handle the case where the element does not exist
-                            print(f"No element found with ID {elem_id}")
+def get_bro_text_list_iter(element, depth=2):
+    if depth < 0:
+        return ['']
+    parent_element = get_parent_element(element)
+    result = get_bro_text_list_iter(parent_element, depth=depth - 1)
+    if parent_element.text != '':
+        return result + [parent_element.text]
+    else:
+        return result
+
+
+def filter_elements(max_depth=2):
+    target_map = {
+        "name": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["name", "full name", "first name", "last name", "your name"],
+                "placeholder": ["name", "full name", "first name", "last name", "your name"],
+                "name": ["name", "full name", "first name", "last name", "your name"],
+                "id": ["name", "full name", "first name", "last name", "your name"]
+            }
+        },
+        "phone number": {
+            "element": "input",
+            "options": {
+                "type": "tel",
+                "data-name": ["phone", "phone number", "number"],
+                "name": ["phone", "phone number", "number"],
+                "id": ["phone", "phone number", "number"]
+            }
+        },
+        "email": {
+            "element": "input",
+            "options": {
+                "type": "email",
+                "data-name": ["E-mail", "email", "email address"],
+                "placeholder": ["E-mail", "email", "email address"],
+                "name": ["E-mail", "email", "email address"],
+                "id": ["E-mail", "email", "email address"]
+            }
+        },
+        "address": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["address"],
+                "placeholder": ["address"],
+                "name": ["address"],
+                "id": ["address"],
+            }
+        },
+        "state/city": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
+                "placeholder": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
+                "name": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
+                "id": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
+            }
+        },
+        "subject": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["subject"],
+                "placeholder": ["subject"],
+                "name": ["subject"],
+                "id": ["subject"],
+            }
+        },
+        "message": {
+            "element": "textarea",
+            "force": True,
+            "options": {
+
+            }
+        },
+        "Kitten": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
+                              "NameofKitten", "Name of Kitten"],
+                "placeholder": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
+                                "NameofKitten", "Name of Kitten"],
+                "name": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
+                         "NameofKitten", "Name of Kitten"],
+                "id": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
+                       "NameofKitten", "Name of Kitten"],
+            }
+        },
+        "Puppy": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["Puppy", "PuppyName", "Name Puppy", "Puppy Name", "NamePuppy", "NameofPuppy",
+                              "Name of Puppy"],
+                "placeholder": ["Puppy", "PuppyName", "Name Puppy", "Puppy Name", "NamePuppy",
+                                "NameofPuppy", "Name of Puppy"],
+                "name": ["Puppy", "Name Puppy", "Puppy Name", "NamePuppy", "NameofPuppy",
+                         "Name of Puppy"],
+                "id": ["Puppy", "PuppyName", "Name Puppy", "Puppy Name", "PuppyName", "NamePuppy", "NameofPuppy",
+                       "Name of Puppy"],
+            }
+        },
+        "Dog Breed": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["Dog Breed", "DogBreed"],
+                "placeholder": ["Dog Breed", "DogBreed"],
+                "name": ["Dog Breed", "DogBreed"],
+                "id": ["Dog Breed", "DogBreed"],
+            }
+        },
+        "Cat Breed": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["Cat Breed", "CatBreed"],
+                "placeholder": ["Cat Breed", "CatBreed"],
+                "name": ["Cat Breed", "CatBreed"],
+                "id": ["Cat Breed", "CatBreed"],
+            }
+        }
+    }
+    base = driver.find_element(By.TAG_NAME, 'form')
+    result = {}
+    try:
+        for key, value in tqdm(target_map.items()):
+            elements = base.find_elements(By.TAG_NAME, value["element"])
+            for element in elements:
+                attrs = {}
+                if value.get("force", False):
+                    result[key] = element
+                for name, target_values in value.get("require", {}).items():
+                    if element.get_attribute(name) != target_values:
                         break
+                content = get_parent_element_text_iter(element, depth=max_depth)
+                bro_content = get_bro_text_list_iter(element, depth=max_depth - 1)
+                bro_content += [content]
+                for name, target_values in value["options"].items():
+                    if len(attrs.keys()) > 0:
+                        break
+                    if type(target_values) == str:
+                        target_values = [target_values]
+                    for target_value in target_values:
+                        v = element.get_attribute(name)
+                        if v is not None and (
+                                target_value.lower() == v.lower() or (target_value.lower() in v.lower() and len(
+                            v.lower().replace(target_value.lower(), '').replace(' ', '')) < 3)):
+                            attrs[name] = v
+                            break
+                        for c in bro_content:
+                            if c is not None and len(c) > 0:
+                                score = process.extractOne(target_value.lower(), [c.lower()])[1]
+                                if score > 90:
+                                    attrs[name] = c
+                                    print(f"parent text: {c} / {target_value} with score {score}")
+                                    break
 
-        # Fallback to 'placeholder' and 'data-aid' attributes if needed
-        if highest_score < score_threshold:
-            for elem in elements.get('input', []) + elements.get('textarea', []):
-                placeholder = elem.get_attribute('placeholder')
-                if placeholder:
-                    score = process.extractOne(target, [placeholder])[1]
-                    if score > highest_score:
-                        matched_element = elem
-                        highest_score = score
+                if len(attrs.keys()) > 0:
+                    result[key] = element
+                    break
+    except Exception as e:
+        traceback.print_exc()
+        print(f"An error occurred while filtering elements: {e}")
 
-                data_aid = elem.get_attribute('data-aid')
-                if data_aid:
-                    score = process.extractOne(target, [data_aid])[1]
-                    if score > highest_score:
-                        matched_element = elem
-                        highest_score = score
+    for key, value in result.items():
+        print(f"{key}: {value.get_attribute('outerHTML')}")
 
-        if highest_score >= score_threshold and matched_element:
-            found_elements[target] = matched_element
-
-    return found_elements
+    return result
 
 
 def select_random_checkbox():
@@ -194,7 +337,8 @@ def generate_dog_breed():
 
 
 def generate_kitten_breed():
-    breed = ['Chinese Li Hua', 'Persian', 'Siamese', 'Bengal', 'British Shorthair', 'Maine Coon', 'Ragdoll', 'Scottish Fold',
+    breed = ['Chinese Li Hua', 'Persian', 'Siamese', 'Bengal', 'British Shorthair', 'Maine Coon', 'Ragdoll',
+             'Scottish Fold',
              'Sphynx', 'Russian Blue', 'Norwegian Forest Cat', ]
     return random.choice(breed)
 
@@ -238,7 +382,7 @@ def autofill_form():
     data = {}
     fields_to_match = ["name", "phone number", "email", "address", "state", "city", "state/city", "subject", "message",
                        "Kitten", "Puppy", "Dog Breed", "Cat Breed"]
-    matched_elements = find_elements_by_match(fields_to_match)
+    matched_elements = filter_elements()
 
     email = get_random_addr()
     username = names.get_first_name()
@@ -283,13 +427,13 @@ def autofill_form():
             submit_button.click()
             current_url = driver.current_url
             save_to_cache(username, email, current_url)
+            WebDriverWait(driver, 3).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, "div.wpcf7-mail-sent-ok"))
+            )
             print("Form submitted successfully!")
         else:
             print("Submit button not found")
-        # WebDriverWait(driver, 3).until(
-        #     EC.presence_of_element_located((By.CSS_SELECTOR, "div.wpcf7-mail-sent-ok"))
-        # )
-        # print("Form submitted successfully!")
+
     except TimeoutException:
         print("Form submission failed or confirmation not found.")
     pass
