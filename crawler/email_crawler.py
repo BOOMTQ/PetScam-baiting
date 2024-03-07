@@ -49,13 +49,12 @@ def format_email(email_data):
 
 
 def get_mailgun_logs():
-
     response = requests.get(
         logs_url,
         auth=('api', API_KEY),
         params={"begin": two_days_ago,
                 "ascending": "yes",
-                "limit": 100,
+                "limit": 200,
                 "event": "stored"}
     )
 

@@ -46,7 +46,7 @@ class Replier(ABC):
 
 
 class ChatReplier1(Replier):
-    name = "Investigator"
+    name = "investigator"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")
@@ -55,7 +55,7 @@ class ChatReplier1(Replier):
 
 
 class ChatReplier2(Replier):
-    name = "Newbies"
+    name = "newbies"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")
@@ -64,7 +64,7 @@ class ChatReplier2(Replier):
 
 
 class ChatReplier3(Replier):
-    name = "Bargainer"
+    name = "bargainer"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")
@@ -73,7 +73,7 @@ class ChatReplier3(Replier):
 
 
 class ChatReplier4(Replier):
-    name = "ImpatientConsumer"
+    name = "impatientConsumer"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")

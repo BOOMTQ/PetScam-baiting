@@ -17,10 +17,14 @@ from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
 from tqdm import tqdm
 from solution_manager import get_random_addr
+from responder.Message_Replier import investigator, newbies, bargainer, impatient
 
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
 service = Service(executable_path=driver_path)
 driver = webdriver.Chrome(service=service)
+
+sol_index = 0
+sols = [investigator, newbies, bargainer, impatient]
 
 
 def get_parent_element(element):
@@ -100,10 +104,12 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
-                "placeholder": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
-                "name": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
-                "id": ["state/city", "state", "city", "state / city", "city/state", "city / state"],
+                "data-name": ["state/city", "state", "city", "state / city", "city/state", "city / state",
+                              "city / address"],
+                "placeholder": ["state/city", "state", "city", "state / city", "city/state", "city / state",
+                                "city / address"],
+                "name": ["state/city", "state", "city", "state / city", "city/state", "city / state", "city / address"],
+                "id": ["state/city", "state", "city", "state / city", "city/state", "city / state", "city / address"]
             }
         },
         "subject": {
@@ -255,15 +261,17 @@ def select_random_option():
         for select_element in select_elements:
             if select_element.is_displayed() and select_element.is_enabled():
                 select_object = Select(select_element)
-                wait = WebDriverWait(driver, 5)
-                wait.until(EC.element_to_be_clickable((By.TAG_NAME, 'option')))
 
-                option_indexes = list(range(len(select_object.options)))
-                if option_indexes:
-                    option_indexes.pop(0)
-                if option_indexes:
-                    select_object.select_by_index(random.choice(option_indexes))
-    except (NoSuchElementException, TimeoutException, ElementNotInteractableException) as e:
+                wait = WebDriverWait(driver, 5)
+                wait.until(lambda driver: select_element.find_elements(By.TAG_NAME, 'option'))
+
+                options = [option for option in select_object.options if
+                           option.is_enabled() and option.get_attribute('value')]
+
+                if len(options) > 1:
+                    select_object.select_by_index(random.choice(range(1, len(options))))
+
+    except Exception as e:
         print(f"An error occurred while selecting an option: {e}")
 
 
@@ -317,6 +325,16 @@ def generate_city():
     return random.choice(cities)
 
 
+def generate_message():
+    global sol_index
+    prompt = ""
+    sol = sols[sol_index]
+    sol_name = sol.__name__
+    message = sol(prompt)
+    sol_index = (sol_index + 1) % len(sols)
+    return message, sol_name
+
+
 def generate_kitten():
     kittenname = ['SNOW', 'CHLOE', 'KIARA', 'WINSTON', 'NEO', 'ELINA', 'RUBY', 'RIVER', 'Chleo', 'Luke', 'Ella', 'Joy',
                   'Nick', 'Joel', 'Platon', 'Brie', 'Ozzy']
@@ -342,7 +360,7 @@ def generate_kitten_breed():
     return random.choice(breed)
 
 
-def save_to_cache(email, username, url):
+def save_to_cache(email, sol_name, username, url):
     cache_file_path = CRAWLER_PROG_DIR
     if not os.path.exists(os.path.dirname(cache_file_path)):
         os.makedirs(os.path.dirname(cache_file_path))
@@ -359,6 +377,7 @@ def save_to_cache(email, username, url):
 
     cache_data.append({
         "bait_email": email,
+        "sol": sol_name,
         "username": username,
         "url": url
     })
@@ -383,6 +402,7 @@ def autofill_form():
 
     email = get_random_addr()
     username = names.get_first_name()
+    message, sol_name = generate_message()
 
     data.update({
         "name": username,
@@ -391,7 +411,7 @@ def autofill_form():
         "address": generate_address(),
         "state/city": generate_city(),
         "subject": "Inquiry",
-        "message": "Hi, I am interested with your pet, could you please contact me as soon as possible?",  # use gpt API
+        "message": message,
         "Kitten": generate_kitten(),
         "Puppy": generate_puppy(),
         "Dog Breed": generate_dog_breed(),
@@ -411,19 +431,19 @@ def autofill_form():
     select_random_option()
     time.sleep(3)
 
-    # try:
-    #     submit_button = driver.find_element(By.CSS_SELECTOR,
-    #                                         'button[type="submit"], input[type="submit"]')
-    #     if submit_button:
-    #         submit_button.click()
-    #         current_url = driver.current_url
-    #         save_to_cache(username, email, current_url)
-    #         print("Form submitted successfully!")
-    #     else:
-    #         print("Submit button not found")
-    #
-    # except TimeoutException:
-    #     print("Form submission failed or confirmation not found.")
+    try:
+        submit_button = driver.find_element(By.CSS_SELECTOR,
+                                            'button[type="submit"], input[type="submit"]')
+        if submit_button:
+            submit_button.click()
+            current_url = driver.current_url
+            save_to_cache(email, sol_name, username, current_url)
+            print("Form submitted successfully!")
+        else:
+            print("Submit button not found")
+
+    except TimeoutException:
+        print("Form submission failed or confirmation not found.")
     pass
 
 
