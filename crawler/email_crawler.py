@@ -1,16 +1,15 @@
 import requests
 import json
+import time
 from datetime import datetime, timedelta
 from os import listdir
 from os.path import isfile, join
 from secret import API_KEY, API_BASE_URL
 from email.utils import parsedate_to_datetime
-import time
+from secret import CRAWLER_PROG_DIR, ADDR_SOL_PATH, MAIL_HANDLED_DIR, MAIL_SAVE_DIR
 
 logs_url = f'{API_BASE_URL}/events'
 
-local_path = 'D:/UoB/UG/大三/individual project/Petscam-baiting/emails/queued/'
-handled_email_path = 'D:/UoB/UG/大三/individual project/Petscam-baiting/emails/handled/'
 
 # Get the current UTC date and time
 now_utc = datetime.utcnow()
@@ -24,9 +23,8 @@ day_before_yesterday_utc = today_utc - timedelta(days=2)
 # Format the date as a string in RFC 2822 format with the UTC offset, include emails in day1, day2 and day3
 two_days_ago = day_before_yesterday_utc.strftime('%a, %d %b %Y %H:%M:%S +0000')
 
-
-downloaded_emails = [f for f in listdir(local_path) if isfile(join(local_path, f))]
-handled_emails = [f for f in listdir(handled_email_path) if isfile(join(handled_email_path, f))]
+downloaded_emails = [f for f in listdir(MAIL_SAVE_DIR) if isfile(join(MAIL_SAVE_DIR, f))]
+handled_emails = [f for f in listdir(MAIL_HANDLED_DIR) if isfile(join(MAIL_HANDLED_DIR, f))]
 
 
 def format_email(email_data):
@@ -45,7 +43,59 @@ def format_email(email_data):
         'from': from_email,
         'bait_email': bait_email,
     }
+
     return formatted_email
+
+
+def update_record(formatted_email):
+    with open(CRAWLER_PROG_DIR, 'r') as f:
+        cache_data = json.load(f)
+
+    bait_email = formatted_email['bait_email']
+    scam_email = formatted_email['from']
+
+    record_updated = False
+    for cache in cache_data:
+        if cache['bait_email'] == bait_email:
+            record = {
+                "bait_email": bait_email,
+                "sol": cache.get('sol', ''),
+                "scam_email": scam_email,
+                "username": cache.get('username', '')
+            }
+            # Update record.json
+            try:
+                if isfile(ADDR_SOL_PATH):
+                    with open(ADDR_SOL_PATH, 'r') as record_file:
+                        records = json.load(record_file)
+                else:
+                    records = {}
+
+                # Check if the record for this bait_email already exists
+                existing_record = records.get(record['bait_email'])
+                if existing_record:
+                    # if the record exists, do not re-store it
+                    print(f"Record for bait email: {record['bait_email']} already exists.")
+                else:
+                    # Otherwise, add the new record
+                    records[record['bait_email']] = {
+                        "sol": record.get('sol', ''),
+                        "to": record.get('scam_email', ''),
+                        "username": record.get('username', '')
+                    }
+                    print(f"Added new record for bait email: {record['bait_email']}")
+
+                # Write new records back to the file.
+                with open(ADDR_SOL_PATH, 'w') as record_file:
+                    json.dump(records, record_file, indent=4)
+
+            except Exception as e:
+                print(f"An error occurred while updating the records: {e}")
+            record_updated = True
+            break
+
+    if not record_updated:
+        print(f"No matching cache found for bait email: {bait_email}")
 
 
 def get_mailgun_logs():
@@ -86,8 +136,10 @@ def get_mailgun_logs():
 
                     stored_email = format_email(full_email)
 
-                    # write the email to a file
-                    with open(local_path + filename, 'w') as email_file:
+                    update_record(stored_email)
+
+                    # write the email to a file and save it to MAIL_SAVE_DIR
+                    with open(MAIL_SAVE_DIR + filename, 'w') as email_file:
                         json.dump(stored_email, email_file, indent=4)
                     print(f"Email saved to {filename}")
                 else:
