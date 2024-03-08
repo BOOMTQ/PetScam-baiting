@@ -453,7 +453,10 @@ def autofill_form():
             submit_button.click()
             submission_successful = WebDriverWait(driver, 10).until(AnyOf(
                 EC.url_changes(driver.current_url),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]"))
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
             ))
             if submission_successful:
                 current_url = driver.current_url
