@@ -4,13 +4,15 @@ from urllib.parse import urljoin
 import datetime
 import json
 import time
+from rate_calculate.calculator import calculate_success_rate
 
 
-def get_web(base_url, days=30, max_pages=35):
+def get_web(base_url, days=3, max_pages=4):
     current_date = datetime.datetime.now()
     scam_links = []
     page_url = base_url
     page_count = 0
+    attempted_links = 0
 
     with requests.Session() as session:
         while page_url and page_count < max_pages:
@@ -32,6 +34,7 @@ def get_web(base_url, days=30, max_pages=35):
                                 scam_url = title_tag.get_text().strip()
                                 if not scam_url.startswith('http'):
                                     scam_url = 'https://' + scam_url
+                                attempted_links += 1
                                 scam_links.append(scam_url)
                 except Exception as e:
                     print(f"An error occurred: {e}")
@@ -45,7 +48,7 @@ def get_web(base_url, days=30, max_pages=35):
                 page_url = None
             print("Fetching complete.")
 
-    return scam_links
+    return scam_links, attempted_links
 
 
 def save_url(scam_urls, filename='pet-scams.json'):
@@ -56,7 +59,9 @@ def save_url(scam_urls, filename='pet-scams.json'):
 # Scrape and save the URLs in the Main function
 def main():
     base_url = 'https://petscams.com'
-    scam_links = get_web(base_url)
+    scam_links, attempted_links = get_web(base_url)
+    success_rate = calculate_success_rate("petscam_crawl", scam_links, attempted_links)
+    print(f"Success rate: {success_rate:.2f}%")
     save_url(scam_links)
 
 

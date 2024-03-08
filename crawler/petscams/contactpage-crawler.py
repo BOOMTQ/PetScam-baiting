@@ -3,6 +3,7 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from rate_calculate.calculator import calculate_success_rate
 
 
 # Heuristic Approach : match form pages based on a set of predefined keywords
@@ -33,14 +34,19 @@ def save_urls(scam_urls, filename='contact-page.json'):
 def main():
     urls = read_urls()
     contact_page_urls = []
+    attempted_links = 0
 
     for url in urls:
+        attempted_links += 1
         contact_url = get_contact_page(url)
         if contact_url:
             contact_page_urls.append(contact_url)
-            save_urls(contact_page_urls)
         else:
             print(f"Contact page not found for {url}")
+
+    save_urls(contact_page_urls)
+    success_rate = calculate_success_rate('contactpage_crawl', contact_page_urls, attempted_links)
+    print(f"Success rate: {success_rate:.2f}%")
 
 
 if __name__ == "__main__":

@@ -18,6 +18,7 @@ from selenium.webdriver.common.by import By
 from tqdm import tqdm
 from solution_manager import get_random_addr
 from responder.Message_Replier import investigator, newbies, bargainer, impatient_consumer
+from rate_calculate.calculator import calculate_success_rate
 
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
 service = Service(executable_path=driver_path)
@@ -396,6 +397,20 @@ def write_urls_to_json(file_path, url_list):
         json.dump(url_list, file, indent=4)
 
 
+class AnyOf:  # Custom condition class: check if any of the given conditions are satisfied
+    def __init__(self, *args):
+        self.conditions = args
+
+    def __call__(self, driver):
+        for condition in self.conditions:
+            try:
+                if condition(driver):
+                    return True
+            except:
+                continue
+        return False
+
+
 def autofill_form():
     data = {}
     matched_elements = filter_elements()
@@ -429,41 +444,55 @@ def autofill_form():
 
     select_random_checkbox()
     select_random_option()
-    time.sleep(3)
+    time.sleep(2)
 
     try:
         submit_button = driver.find_element(By.CSS_SELECTOR,
                                             'button[type="submit"], input[type="submit"]')
         if submit_button:
             submit_button.click()
-            current_url = driver.current_url
-            save_to_cache(email, sol_name, username, current_url)
-            print("Form submitted successfully!")
+            submission_successful = WebDriverWait(driver, 10).until(AnyOf(
+                EC.url_changes(driver.current_url),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]"))
+            ))
+            if submission_successful:
+                current_url = driver.current_url
+                save_to_cache(email, sol_name, username, current_url)
+                print("Form submitted successfully!")
+                return True
+            else:
+                print("Form submission might not be successful.")
+                return False
         else:
             print("Submit button not found")
+            return False
 
     except TimeoutException:
         print("Form submission failed or confirmation not found.")
     pass
 
 
-if __name__ == '__main__':
+def main():
     input_file = 'urls/input_urls.json'
     urls = read_urls_from_json(input_file)
 
     success_urls = []
     fail_urls = []
+    attempted_links = 0
 
     for url in urls:
+        attempted_links += 1
         try:
             driver.get(url)
-            autofill_form()
-            success_urls.append(url)
+            if autofill_form():
+                success_urls.append(url)
+            else:
+                fail_urls.append(url)
             time.sleep(2)
         except Exception as e:
             print(f"An error occurred with {url}: {e}")
             fail_urls.append(url)
-            continue
+            # continue
 
     driver.quit()
 
@@ -471,3 +500,10 @@ if __name__ == '__main__':
     fail_file = 'urls/fail_urls.json'
     write_urls_to_json(success_file, success_urls)
     write_urls_to_json(fail_file, fail_urls)
+
+    success_rate = calculate_success_rate("formfill_crawl", success_urls, attempted_links)
+    print(f"Success rate: {success_rate:.2f}%")
+
+
+if __name__ == '__main__':
+    main()
