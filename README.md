@@ -16,7 +16,7 @@ On https://petscams.com/, which have listed known pet scam and delivery scam web
 ## Project execution process
 The complete execution process of the entire project is as follows:
 1. To get pet scam websites: run ./crawler/petscams/petscam_crawl.py, then run ./crawler/petscams/contactpage-crawler.py
-2. To automatedly fill in the contact form: run ./crawler/universalcrawel.py (maybe need to run server port 8080)
+2. To automatedly fill in the contact form: run ./crawler/formfill_crawler.py 
 3. Waiting for the scam emails from pet scammers...
 4. Fetching the received scam emails and automatedly sending bait emails: run ./corn.py
 5. According to the email conversations of each repliers saved in ./emails/archive. Count the difference in timestamp and comparatively analyse the time wasted by scammers at different repliers.

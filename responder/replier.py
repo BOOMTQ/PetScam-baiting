@@ -73,7 +73,7 @@ class ChatReplier3(Replier):
 
 
 class ChatReplier4(Replier):
-    name = "impatientConsumer"
+    name = "impatient_consumer"
 
     def _gen_text(self, prompt) -> str:
         print(f"Generating reply using {self.name}")

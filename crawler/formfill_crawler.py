@@ -17,14 +17,14 @@ from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
 from tqdm import tqdm
 from solution_manager import get_random_addr
-from responder.Message_Replier import investigator, newbies, bargainer, impatient
+from responder.Message_Replier import investigator, newbies, bargainer, impatient_consumer
 
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
 service = Service(executable_path=driver_path)
 driver = webdriver.Chrome(service=service)
 
 sol_index = 0
-sols = [investigator, newbies, bargainer, impatient]
+sols = [investigator, newbies, bargainer, impatient_consumer]
 
 
 def get_parent_element(element):
@@ -431,20 +431,20 @@ def autofill_form():
     select_random_option()
     time.sleep(3)
 
-    # try:
-    #     submit_button = driver.find_element(By.CSS_SELECTOR,
-    #                                         'button[type="submit"], input[type="submit"]')
-    #     if submit_button:
-    #         submit_button.click()
-    #         current_url = driver.current_url
-    #         save_to_cache(email, sol_name, username, current_url)
-    #         print("Form submitted successfully!")
-    #     else:
-    #         print("Submit button not found")
-    #
-    # except TimeoutException:
-    #     print("Form submission failed or confirmation not found.")
-    # pass
+    try:
+        submit_button = driver.find_element(By.CSS_SELECTOR,
+                                            'button[type="submit"], input[type="submit"]')
+        if submit_button:
+            submit_button.click()
+            current_url = driver.current_url
+            save_to_cache(email, sol_name, username, current_url)
+            print("Form submitted successfully!")
+        else:
+            print("Submit button not found")
+
+    except TimeoutException:
+        print("Form submission failed or confirmation not found.")
+    pass
 
 
 if __name__ == '__main__':

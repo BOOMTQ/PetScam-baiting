@@ -16,7 +16,7 @@ from archiver import archive
 
 def main(crawl=True):
     if crawl:
-        crawler.crawl_all()  # run all the crawlers first
+        crawler.crawl_email()  # run all the income email first
         # pass
 
     # Handle incoming emails
@@ -83,6 +83,7 @@ def main(crawl=True):
                         os.makedirs(MAIL_HANDLED_DIR)
                     shutil.move(email_path, os.path.join(MAIL_HANDLED_DIR, email_filename))
 
+                    archive(True, scam_email, bait_email, subject, text)
                     archive(False, scam_email, bait_email, subject, res_text)
             except Exception as e:
                 print(e)
