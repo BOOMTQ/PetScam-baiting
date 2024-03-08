@@ -1,18 +1,18 @@
 import requests
 
-from secret import API_KEY, API_BASE_URL, DOMAIN_NAME
+from secret import API_KEY, API_BASE_URL
 
 with open("mailgun/template.html", "r") as f:
     template = f.read()
 
 
-# 如何使用Maligun_API回复scam_email
+# Send email by Mailgun API
 
 def send_email(username, address, target, subject, text):
     if type(target) == str:
         target = [target]
 
-    print(f"Trying to send an email from {address} to {target}")
+    print(f"Send an email from {address} to {target}")
 
     res = requests.post(
         f"{API_BASE_URL}/messages",
@@ -28,5 +28,5 @@ def send_email(username, address, target, subject, text):
 
 
 if __name__ == '__main__':
-    print(send_email("HelloTester", "postmaster@example.com", "xitone5727@alibrs.com", "==Test==",
+    print(send_email("HelloTester", "su777@malabaka.social", "77lovesm@gmail.com", "==Test==",
                      "Test these fucking stuff"))

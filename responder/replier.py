@@ -39,10 +39,10 @@ class Replier(ABC):
 
         return res
 
-    def get_reply_by_his(self, addr):
-        with open(os.path.join(MAIL_ARCHIVE_DIR, addr + ".his"), "r", encoding="utf8") as f:
-            content = f.read()
-        return self.get_reply(content + "\n[bait_start]\n")
+    # def get_reply_by_his(self, addr):
+    #     with open(os.path.join(MAIL_ARCHIVE_DIR, addr + ".his"), "r", encoding="utf8") as f:
+    #         content = f.read()
+    #     return self.get_reply(content + "\n[bait_start]\n")
 
 
 class ChatReplier1(Replier):

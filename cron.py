@@ -44,43 +44,25 @@ def main(crawl=True):
                 if not subject.startswith("Re:"):
                     subject = "Re: " + subject
                 scam_email = email_obj["from"]
+                bait_email = email_obj["bait_email"]
+                stored_info = solution_manager.get_stored_info(bait_email, scam_email)
 
-                if "bait_email" not in email_obj:
-                    # Email just crawled
+                if stored_info is None:
+                    print(f"Cannot found replier for {bait_email}")
+                    os.remove(email_path)
+                    continue
 
-                    if solution_manager.scam_exists(scam_email):
-                        print("This crawled email has been replied, ignoring")
-                        os.remove(email_path)
-                        continue
-                        # pass
+                print(f"Found selected replier {stored_info.sol}")
+                replier = responder.get_replier_by_name(stored_info.sol)
+                responder.update_replier_history(scam_email, stored_info.sol)
 
-                    archive(True, scam_email, "CRAWLER", email_obj["title"], text)
-
-                    print("This email is just crawled, using random replier")
-                    replier = responder.get_replier_randomly()
-                    bait_email = solution_manager.gen_new_addr(scam_email, replier.name)
-                    stored_info = solution_manager.get_stored_info(bait_email, scam_email)
-                else:  # 已经存在bait_email，并且被使用来回复scam_email
-                    bait_email = email_obj["bait_email"]
-                    stored_info = solution_manager.get_stored_info(bait_email, scam_email)
-
-                    if stored_info is None:
-                        print(f"Cannot found replier for {bait_email}")
-                        os.remove(email_path)
-                        continue
-
-                    print(f"Found selected replier {stored_info.sol}")
-                    replier = responder.get_replier_by_name(stored_info.sol)
-                    if replier is None:
-                        print("Replier Sol_name not found")
-                        os.remove(email_path)
-                        continue
+                if replier is None:
+                    print("Replier Sol_name not found")
+                    os.remove(email_path)
+                    continue
 
                 try:
-                    if replier.name == "Classifier":
-                        res_text = replier.get_reply_by_his(scam_email)
-                    else:
-                        res_text = replier.get_reply(text)
+                    res_text = replier.get_reply(text)
                 except Exception as e:
                     print("GENERATING ERROR")
                     print(e)
@@ -88,7 +70,7 @@ def main(crawl=True):
                     print("Due to CUDA Error, stopping whole sequence")
                     return
 
-                    # Add Signature
+                # Add Signature
                 res_text += f"\n\nBest wishes,\n{stored_info.username}"
 
                 send_result = mailgun.send_email(stored_info.username, stored_info.addr, scam_email, subject, res_text)
@@ -108,11 +90,10 @@ def main(crawl=True):
         else:
             break
     else:
-        print("No more emails to reply, please try to get new income emails from mailgun")
+        print("No more emails to reply")
 
 
 if __name__ == '__main__':
-
     if os.path.exists("./lock"):
         quit(-1)
 

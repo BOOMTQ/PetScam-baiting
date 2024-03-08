@@ -21,7 +21,6 @@ def archive(is_inbound, scam_email, bait_email, subject, body):
         f.write(archive_content)
 
     # Save conversation history
-
     history_filename = scam_email + ".his"
 
     if is_inbound:

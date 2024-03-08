@@ -10,7 +10,7 @@ def on_receive(data):
     res = {"from": str(data["sender"]).lower()}
 
     raw_rec = str(data["recipient"])
-    if "," in raw_rec: # 筛查诈骗人的邮箱地址
+    if "," in raw_rec:
         for rec in raw_rec.split(","):
             if rec.endswith(DOMAIN_NAME):
                 res["bait_email"] = rec
@@ -27,6 +27,6 @@ def on_receive(data):
         os.makedirs(MAIL_SAVE_DIR)
 
     with open(f"{MAIL_SAVE_DIR}/{filename}", "w", encoding="utf8") as f:
-        json.dump(res, f) #将python对象res转换为json文件f
+        json.dump(res, f)
 
     archive(True, res["from"], res["bait_email"], res["title"], res["content"])
