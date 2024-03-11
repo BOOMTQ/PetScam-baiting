@@ -105,10 +105,14 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["address", "your address", "home address", "residential address"],
-                "placeholder": ["address", "your address", "home address", "residential address"],
-                "name": ["address", "your address", "home address", "residential address"],
-                "id": ["address", "your address", "home address", "residential address"]
+                "data-name": ["address", "your address", "home address", "residential address", "location",
+                              "location address", "your location"],
+                "placeholder": ["address", "your address", "home address", "residential address", "location",
+                                "location address", "your location"],
+                "name": ["address", "your address", "home address", "residential address", "location",
+                         "location address", "your location"],
+                "id": ["address", "your address", "home address", "residential address", "location",
+                       "location address", "your location"]
             }
         },
         "state": {
@@ -118,11 +122,13 @@ def filter_elements(max_depth=2):
             },
             "options": {
                 "data-name": ["state/city", "state", "state / city", "city/state", "city / state",
-                              "city / address"],
+                              "state / address", "location/state", "state/location"],
                 "placeholder": ["state/city", "state", "state / city", "city/state", "city / state",
-                                "city / address"],
-                "name": ["state/city", "state", "state / city", "city/state", "city / state", "city / address"],
-                "id": ["state/city", "state", "state / city", "city/state", "city / state", "city / address"]
+                                "state / address", "location/state", "state/location"],
+                "name": ["state/city", "state", "state / city", "city/state", "city / state",
+                         "state / address", "location/state", "state/location"],
+                "id": ["state/city", "state", "state / city", "city/state", "city / state",
+                       "state / address", "location/state", "state/location"]
             }
         },
         "city": {
@@ -131,10 +137,14 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["city", "city / address"],
-                "placeholder": ["city", "city / address"],
-                "name": ["city", "city / address"],
-                "id": ["city", "city / address"]
+                "data-name": ["city", "city / address", "province", "city / province", "province / city",
+                              "province/city", "city/province", "location/city", "city/location"],
+                "placeholder": ["city", "city / address", "province", "city / province", "province / city",
+                                "province/city", "city/province", "location/city", "city/location"],
+                "name": ["city", "city / address", "province", "city / province", "province / city",
+                         "province/city", "city/province", "location/city", "city/location"],
+                "id": ["city", "city / address", "province", "city / province", "province / city",
+                       "province/city", "city/province", "location/city", "city/location"]
             }
         },
         "subject": {
