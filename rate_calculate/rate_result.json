@@ -1,56 +1,26 @@
 {
-    "petscam_crawl": {
-        "timestamp": "Mar 08 at 09:32",
+    "petscam_crawl_Mar_11_at_0428": {
+        "timestamp": "Mar 11 at 04:28",
         "success_rate": 100.0,
-        "scraped_links": 39,
-        "attempted_links": 39
+        "scraped_links": 460,
+        "attempted_links": 460
     },
-    "petscam_crawl_Mar_08_at_0940": {
-        "timestamp": "Mar 08 at 09:40",
+    "contactpage_crawl_Mar_11_at_1502": {
+        "timestamp": "Mar 11 at 15:02",
+        "success_rate": 71.30434782608695,
+        "scraped_links": 328,
+        "attempted_links": 460
+    },
+    "petscam_crawl_Mar_11_at_1951": {
+        "timestamp": "Mar 11 at 19:51",
         "success_rate": 100.0,
-        "scraped_links": 31,
-        "attempted_links": 31
+        "scraped_links": 327,
+        "attempted_links": 327
     },
-    "contactpage_crawl_Mar_08_at_0951": {
-        "timestamp": "Mar 08 at 09:51",
-        "success_rate": 96.7741935483871,
-        "scraped_links": 30,
-        "attempted_links": 31
-    },
-    "formfill_crawl_Mar_08_at_1009": {
-        "timestamp": "Mar 08 at 10:09",
-        "success_rate": 50.0,
-        "scraped_links": 1,
-        "attempted_links": 2
-    },
-    "formfill_crawl_Mar_08_at_1019": {
-        "timestamp": "Mar 08 at 10:19",
-        "success_rate": 100.0,
-        "scraped_links": 1,
-        "attempted_links": 1
-    },
-    "formfill_crawl_Mar_08_at_1040": {
-        "timestamp": "Mar 08 at 10:40",
-        "success_rate": 100.0,
-        "scraped_links": 1,
-        "attempted_links": 1
-    },
-    "formfill_crawl_Mar_08_at_1051": {
-        "timestamp": "Mar 08 at 10:51",
-        "success_rate": 0.0,
-        "scraped_links": 0,
-        "attempted_links": 1
-    },
-    "formfill_crawl_Mar_08_at_1056": {
-        "timestamp": "Mar 08 at 10:56",
-        "success_rate": 0.0,
-        "scraped_links": 0,
-        "attempted_links": 1
-    },
-    "formfill_crawl_Mar_08_at_1106": {
-        "timestamp": "Mar 08 at 11:06",
-        "success_rate": 100.0,
-        "scraped_links": 1,
-        "attempted_links": 1
+    "contactpage_crawl_Mar_11_at_2002": {
+        "timestamp": "Mar 11 at 20:02",
+        "success_rate": 93.88379204892966,
+        "scraped_links": 307,
+        "attempted_links": 327
     }
 }

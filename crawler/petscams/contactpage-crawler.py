@@ -26,11 +26,19 @@ def get_contact_page(url):
             return url
 
         # If no form is found, fall back to heuristic search for contact pages
-        contact_keywords = ['contact-us', 'contact', 'reach-us', 'get-in-touch', 'show-now']
+        contact_keywords = ['contact-us', 'contact', 'reach-us', 'get-in-touch', 'enquire now', 'show-now',
+                            'reach out to us']
         for keyword in contact_keywords:
             contact_link = soup.find('a', href=lambda href: href and keyword in href.lower())
             if contact_link:
                 return urljoin(url, contact_link['href'])
+
+        # Look for an 'a' element with the keyword in its text inside 'li' elements
+        list_items = soup.find_all('li')
+        for li in list_items:
+            a_tag = li.find('a')
+            if a_tag and a_tag.string and any(keyword in a_tag.string.lower() for keyword in contact_keywords):
+                return urljoin(url, a_tag['href'])
 
     except requests.RequestException as e:
         print(f"An error occurred while requesting {url}: {e}")
