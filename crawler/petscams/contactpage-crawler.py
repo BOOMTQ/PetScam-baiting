@@ -1,4 +1,5 @@
 import json
+import os
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,7 +10,7 @@ from rate_calculate.calculator import calculate_success_rate
 # Heuristic Approach : match form pages based on a set of predefined keywords
 def find_contact_form(soup):
     for form in soup.find_all('form'):
-        if form.find('input', {'type': 'text'}):
+        if form.find('input', {'type': 'text'}) and form.find('input', {'type': 'email'}) and form.find('textarea'):
             return form
     return None
 
@@ -22,7 +23,7 @@ def get_contact_page(url):
         # First try to find a contact form directly on the page
         form = find_contact_form(soup)
         if form:
-            return url  # Or return form['action'] if form has an action attribute
+            return url
 
         # If no form is found, fall back to heuristic search for contact pages
         contact_keywords = ['contact-us', 'contact', 'reach-us', 'get-in-touch', 'show-now']
@@ -41,26 +42,36 @@ def read_urls(filename='pet-scams1.json'):
         return json.load(file)
 
 
-def save_urls(scam_urls, filename='contact-page1.json'):
-    with open(filename, 'w') as file:
-        json.dump(scam_urls, file, indent=4)
+def save_urls(scam_urls, success_filename, fail_filename):
+    success_path = os.path.join('success', success_filename)
+    fail_path = os.path.join('fail', fail_filename)
+
+    os.makedirs(os.path.dirname(success_path), exist_ok=True)
+    os.makedirs(os.path.dirname(fail_path), exist_ok=True)
+
+    with open(success_path, 'w') as file:
+        json.dump(scam_urls['success'], file, indent=4)
+
+    with open(fail_path, 'w') as file:
+        json.dump(scam_urls['fail'], file, indent=4)
 
 
 def main():
     urls = read_urls()
-    contact_page_urls = []
+    results = {'success': [], 'fail': []}
     attempted_links = 0
 
     for url in urls:
         attempted_links += 1
         contact_url = get_contact_page(url)
         if contact_url:
-            contact_page_urls.append(contact_url)
+            results['success'].append(contact_url)
         else:
+            results['fail'].append(url)
             print(f"Contact page not found for {url}")
 
-    save_urls(contact_page_urls)
-    success_rate = calculate_success_rate('contactpage_crawl', contact_page_urls, attempted_links)
+    save_urls(results, 'contact-page1.json', 'contact-page1.json')
+    success_rate = calculate_success_rate('contactpage_crawl', results['success'], attempted_links)
     print(f"Success rate: {success_rate:.2f}%")
 
 

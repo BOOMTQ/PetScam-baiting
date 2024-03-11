@@ -62,19 +62,31 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["name", "full name", "first name", "last name", "your name", "names"],
-                "placeholder": ["name", "full name", "first name", "last name", "your name", "names"],
-                "name": ["name", "full name", "first name", "last name", "your name", "names"],
-                "id": ["name", "full name", "first name", "last name", "your name", "names"]
+                "data-name": ["name", "full name", "first name", "your name", "names"],
+                "placeholder": ["name", "full name", "first name", "your name", "names"],
+                "name": ["name", "full name", "first name", "your name", "names"],
+                "id": ["name", "full name", "first name", "your name", "names"]
+            }
+        },
+        "last name": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["last name"],
+                "placeholder": ["last name"],
+                "name": ["last name"],
+                "id": ["last name"]
             }
         },
         "phone number": {
             "element": "input",
             "options": {
-                "type": "tel",
-                "data-name": ["phone", "phone number", "number"],
-                "name": ["phone", "phone number", "number"],
-                "id": ["phone", "phone number", "number"]
+                "type": ["tel", "number"],
+                "data-name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"],
+                "name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"],
+                "id": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"]
             }
         },
         "email": {
@@ -93,24 +105,36 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["address"],
-                "placeholder": ["address"],
-                "name": ["address"],
-                "id": ["address"],
+                "data-name": ["address", "your address", "home address", "residential address"],
+                "placeholder": ["address", "your address", "home address", "residential address"],
+                "name": ["address", "your address", "home address", "residential address"],
+                "id": ["address", "your address", "home address", "residential address"]
             }
         },
-        "state/city": {
+        "state": {
             "element": "input",
             "require": {
                 "type": "text"
             },
             "options": {
-                "data-name": ["state/city", "state", "city", "state / city", "city/state", "city / state",
+                "data-name": ["state/city", "state", "state / city", "city/state", "city / state",
                               "city / address"],
-                "placeholder": ["state/city", "state", "city", "state / city", "city/state", "city / state",
+                "placeholder": ["state/city", "state", "state / city", "city/state", "city / state",
                                 "city / address"],
-                "name": ["state/city", "state", "city", "state / city", "city/state", "city / state", "city / address"],
-                "id": ["state/city", "state", "city", "state / city", "city/state", "city / state", "city / address"]
+                "name": ["state/city", "state", "state / city", "city/state", "city / state", "city / address"],
+                "id": ["state/city", "state", "state / city", "city/state", "city / state", "city / address"]
+            }
+        },
+        "city": {
+            "element": "input",
+            "require": {
+                "type": "text"
+            },
+            "options": {
+                "data-name": ["city", "city / address"],
+                "placeholder": ["city", "city / address"],
+                "name": ["city", "city / address"],
+                "id": ["city", "city / address"]
             }
         },
         "subject": {
@@ -276,52 +300,64 @@ def select_random_option():
         print(f"An error occurred while selecting an option: {e}")
 
 
-def generate_phone():
-    if random.choice([True, False]):
-        # EU format (country code + area code + local number)
-        country_code = random.choice(
-            ['+49', '+33', '+39', '+34', '+48', '+44', '+31', '+32', '+46', '+47', '+358'])  # country codes
-        area_code = random.randint(100, 999)
-        local_number = random.randint(1000, 9999)
-        return f"{country_code} {area_code} {local_number}"
-    else:
-        # US format (3-digit area code + 3-digit exchange code + 4-digit subscriber number)
-        area_code = random.randint(200, 999)
+def generate_uk_phone():
+    country_code = "+44"
+    number = '07' + ''.join(random.choice('0123456789') for _ in range(9))
+    return f"{country_code} {number}"
+
+
+def generate_us_phone():
+    area_code = random.choice([201, 202, 203, 205, 206, 207, 208, 209, 210, 213, 214, 215, 216, 217, 218, 219, 220, 224,
+                               225, 228, 229, 231, 234, 239, 240, 248, 251, 252, 253, 254, 256, 260, 262, 267, 269, 270,
+                               272, 276, 281, 301, 302, 303, 304, 305, 307, 308, 309, 310, 312, 313, 314, 315, 316, 317,
+                               318, 319, 320, 321, 323, 325, 330, 331, 334, 336, 337, 339, 346, 347, 351, 352, 360, 361,
+                               364, 380, 385, 386, 401, 402, 404, 405, 406, 407, 408, 409, 410, 412, 413, 414, 415, 417,
+                               419, 423, 424, 425, 430, 432, 434, 435, 440, 442, 443, 445, 447, 458, 463, 469, 470, 475,
+                               478, 479, 480, 484, 501, 502, 503, 504, 505, 507, 508, 509, 510, 512, 513, 515, 516, 517,
+                               907, 808])
+
+    exchange = random.randint(200, 999)
+    while exchange in [411, 555]:
         exchange = random.randint(200, 999)
-        subscriber = random.randint(1000, 9999)
-        return f"({area_code}) {exchange}-{subscriber}"
+
+    subscriber = random.randint(1000, 9999)
+
+    # Format: +1-NXX-NXX-XXXX
+    return f"+1({area_code}){exchange}{subscriber}"
 
 
-def generate_address():
-    # EU
-    if random.choice([True, False]):
-        number = random.randint(1, 200)
-        street_names = ['High', 'Church', 'London', 'Victory', 'Kings', 'Queens', 'Green']
-        street_types = ['Street', 'Road', 'Way', 'Place', 'Lane']
-        postcode = random.randint(10000, 99999)
-        return f"{number} {random.choice(street_names)} {random.choice(street_types)}, {postcode}"
-    else:
-        # US
-        number = random.randint(100, 9999)
-        street_names = ['Main', 'Oak', 'Pine', 'Maple', 'Cedar', 'Elm', 'Willow']
-        street_types = ['St', 'Ave', 'Blvd', 'Rd', 'Dr', 'Ln']
-        return f"{number} {random.choice(street_names)} {random.choice(street_types)}"
+def generate_uk_address():
+    number = random.randint(1, 200)
+    street_names = ['High', 'Church', 'London', 'Victory', 'Kings', 'Queens', 'Green']
+    street_types = ['Street', 'Road', 'Way', 'Place', 'Lane']
+    postcode = random.randint(10000, 99999)
+    return f"{number} {random.choice(street_names)} {random.choice(street_types)}, {postcode}"
 
 
-def generate_city():
+def generate_us_address():
+    number = random.randint(100, 9999)
+    street_names = ['Main', 'Oak', 'Pine', 'Maple', 'Cedar', 'Elm', 'Willow']
+    street_types = ['St', 'Ave', 'Blvd', 'Rd', 'Dr', 'Ln']
+    return f"{number} {random.choice(street_names)} {random.choice(street_types)}"
+
+
+def generate_uk_city():
     cities = [
-        'Springfield', 'Columbus', 'Phoenix', 'Austin', 'Jacksonville',  # US Cities
-        'Berlin', 'Munich', 'Hamburg',  # German Cities
-        'Paris', 'Marseille', 'Lyon',  # French Cities
-        'Rome', 'Milan', 'Naples',  # Italian Cities
-        'Madrid', 'Barcelona', 'Valencia',  # Spanish Cities
-        'Warsaw', 'Krakow', 'Wroclaw',  # Polish Cities
-        'London', 'Birmingham', 'Manchester',  # UK Cities
-        'Amsterdam', 'Rotterdam', 'The Hague',  # Dutch Cities
-        'Brussels', 'Antwerp', 'Bruges',  # Belgian Cities
-        'Stockholm', 'Gothenburg', 'Malmö',  # Swedish Cities
-        'Oslo', 'Bergen', 'Trondheim',  # Norwegian Cities
-        'Helsinki', 'Espoo', 'Tampere',  # Finnish Cities
+        # UK Cities
+        'London', 'Birmingham', 'Manchester', 'Glasgow', 'Newcastle',
+        'Sheffield', 'Liverpool', 'Leeds', 'Bristol', 'Nottingham',
+        'Leicester', 'Edinburgh', 'Cardiff', 'Brighton', 'Plymouth'
+    ]
+    return random.choice(cities)
+
+
+def generate_us_city():
+    cities = [
+        # US Cities
+        'Springfield', 'Columbus', 'Phoenix', 'Austin', 'Jacksonville',
+        'New York', 'Los Angeles', 'Chicago', 'Houston', 'San Diego',
+        'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'San Francisco',
+        'Indianapolis', 'Seattle', 'Denver', 'Washington', 'Boston'
     ]
     return random.choice(cities)
 
@@ -411,20 +447,37 @@ class AnyOf:  # Custom condition class: check if any of the given conditions are
         return False
 
 
+# Define a counter at the global scope
+i = 0
+
+
 def autofill_form():
+    global i
     data = {}
     matched_elements = filter_elements()
 
     email = get_random_addr()
     username = names.get_first_name()
+    lastname = names.get_last_name()
     message, sol_name = generate_message()
+
+    if i % 2 == 0:  # Even: UK data
+        phone = generate_uk_phone()
+        address = generate_uk_address()
+        city = generate_uk_city()
+    else:  # Odd: US data
+        phone = generate_us_phone()
+        address = generate_us_address()
+        city = generate_us_city()
 
     data.update({
         "name": username,
-        "phone number": generate_phone(),
+        "last name": lastname,
+        "phone number": phone,
         "email": email,
-        "address": generate_address(),
-        "state/city": generate_city(),
+        "address": address,
+        "state": city,
+        "city": city,
         "subject": "Inquiry",
         "message": message,
         "Kitten": generate_kitten(),
@@ -438,41 +491,45 @@ def autofill_form():
             try:
                 wait = WebDriverWait(driver, timeout=5)
                 wait.until(EC.visibility_of(field_element))
+                field_element.clear()
                 field_element.send_keys(data[field_name])
             except Exception as e:
                 print(f"Error interacting with field: {field_name}, error: {e}")
 
+    i += 1
+
+    # Checkboxes and select elements
     select_random_checkbox()
     select_random_option()
     time.sleep(2)
 
-    try:
-        submit_button = driver.find_element(By.CSS_SELECTOR,
-                                            'button[type="submit"], input[type="submit"]')
-        if submit_button:
-            submit_button.click()
-            submission_successful = WebDriverWait(driver, 10).until(AnyOf(
-                EC.url_changes(driver.current_url),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
-            ))
-            if submission_successful:
-                current_url = driver.current_url
-                save_to_cache(email, sol_name, username, current_url)
-                print("Form submitted successfully!")
-                return True
-            else:
-                print("Form submission might not be successful.")
-                return False
-        else:
-            print("Submit button not found")
-            return False
-
-    except TimeoutException:
-        print("Form submission failed or confirmation not found.")
-    pass
+    # try:
+    #     submit_button = driver.find_element(By.CSS_SELECTOR,
+    #                                         'button[type="submit"], input[type="submit"]')
+    #     if submit_button:
+    #         submit_button.click()
+    #         submission_successful = WebDriverWait(driver, 10).until(AnyOf(
+    #             EC.url_changes(driver.current_url),
+    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
+    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
+    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
+    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
+    #         ))
+    #         if submission_successful:
+    #             current_url = driver.current_url
+    #             save_to_cache(email, sol_name, username, current_url)
+    #             print("Form submitted successfully!")
+    #             return True
+    #         else:
+    #             print("Form submission might not be successful.")
+    #             return False
+    #     else:
+    #         print("Submit button not found")
+    #         return False
+    #
+    # except TimeoutException:
+    #     print("Form submission failed or confirmation not found.")
+    # pass
 
 
 def main():
