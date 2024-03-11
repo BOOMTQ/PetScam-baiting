@@ -21,12 +21,12 @@ def get_contact_page(urls):
     return None
 
 
-def read_urls(filename='pet-scams.json'):
+def read_urls(filename='pet-scams1.json'):
     with open(filename, 'r') as file:
         return json.load(file)
 
 
-def save_urls(scam_urls, filename='contact-page.json'):
+def save_urls(scam_urls, filename='contact-page1.json'):
     with open(filename, 'w') as file:
         json.dump(scam_urls, file, indent=4)
 

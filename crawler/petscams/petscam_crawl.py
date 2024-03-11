@@ -51,14 +51,14 @@ def get_web(base_url, days=3, max_pages=4):
     return scam_links, attempted_links
 
 
-def save_url(scam_urls, filename='pet-scams.json'):
+def save_url(scam_urls, filename='pet-scams1.json'):
     with open(filename, 'w') as file:
         json.dump(scam_urls, file, indent=4)
 
 
 # Scrape and save the URLs in the Main function
 def main():
-    base_url = 'https://petscams.com'
+    base_url = 'https://petscams.com/category/puppy-scammer-list/'
     scam_links, attempted_links = get_web(base_url)
     success_rate = calculate_success_rate("petscam_crawl", scam_links, attempted_links)
     print(f"Success rate: {success_rate:.2f}%")
