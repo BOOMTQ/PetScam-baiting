@@ -7,19 +7,6 @@ from rate_calculate.calculator import calculate_success_rate
 
 
 # Heuristic Approach : match form pages based on a set of predefined keywords
-# def get_contact_page(urls):
-#     contact_keywords = ['contact-us', 'contact', 'reach-us', 'get-in-touch']
-#     try:
-#         response = requests.get(urls)
-#         soup = BeautifulSoup(response.text, 'html.parser')
-#         for keyword in contact_keywords:
-#             contact_link = soup.find('a', href=lambda href: href and keyword in href.lower())
-#             if contact_link:
-#                 return urljoin(urls, contact_link['href'])
-#     except requests.RequestException as e:
-#         print(f"An error occurred while requesting {urls}: {e}")
-#     return None
-
 def find_contact_form(soup):
     for form in soup.find_all('form'):
         if form.find('input', {'type': 'text'}):
