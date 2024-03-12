@@ -62,9 +62,10 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["name", "full name", "first name", "your name", "names"],
-                "placeholder": ["name", "full name", "first name", "your name", "names"],
-                "name": ["name", "full name", "first name", "your name", "names"],
+                "data-name": ["name", "full name", "first name", "your name", "names", "your-name"],
+                "placeholder": ["name", "full name", "first name", "your name", "names", "your name.",
+                                "your full name"],
+                "name": ["name", "full name", "first name", "your name", "names", "your-name"],
                 "id": ["name", "full name", "first name", "your name", "names"]
             }
         },
@@ -74,18 +75,22 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["last name"],
-                "placeholder": ["last name"],
-                "name": ["last name"],
-                "id": ["last name"]
+                "data-name": ["last name", "surname", "family name"],
+                "placeholder": ["last name", "surname", "family name"],
+                "name": ["last name", "surname", "family name"],
+                "id": ["last name", "surname", "family name"]
             }
         },
         "phone number": {
             "element": "input",
             "options": {
                 "type": ["tel", "number"],
-                "data-name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"],
-                "name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"],
+                "data-name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel",
+                              "your-number"],
+                "placeholder": ["phone", "phone number", "your phone", "your phone number", "number", "telephone",
+                                "tel", "your-number"],
+                "name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel",
+                         "your-number"],
                 "id": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"]
             }
         },
@@ -93,10 +98,10 @@ def filter_elements(max_depth=2):
             "element": "input",
             "options": {
                 "type": "email",
-                "data-name": ["E-mail", "email", "email address"],
-                "placeholder": ["E-mail", "email", "email address"],
-                "name": ["E-mail", "email", "email address"],
-                "id": ["E-mail", "email", "email address"]
+                "data-name": ["e-mail", "email", "email address", "enter email"],
+                "placeholder": ["e-mail", "email", "email address", "your email", "enter email"],
+                "name": ["e-mail", "email", "email address"],
+                "id": ["e-mail", "email", "email address"]
             }
         },
         "address": {
@@ -122,7 +127,7 @@ def filter_elements(max_depth=2):
             },
             "options": {
                 "data-name": ["state/city", "state", "state / city", "city/state", "city / state",
-                              "state / address", "location/state", "state/location"],
+                              "state / address", "location/state", "state/location", "your-state", "your-cs"],
                 "placeholder": ["state/city", "state", "state / city", "city/state", "city / state",
                                 "state / address", "location/state", "state/location"],
                 "name": ["state/city", "state", "state / city", "city/state", "city / state",
@@ -153,10 +158,10 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["subject"],
-                "placeholder": ["subject"],
-                "name": ["subject"],
-                "id": ["subject"],
+                "data-name": ["subject", "subject type", "type of subject", "your-subject"],
+                "placeholder": ["subject", "subject type", "type of subject"],
+                "name": ["subject", "subject type", "type of subject"],
+                "id": ["subject", "subject type", "type of subject"],
             }
         },
         "message": {
@@ -172,14 +177,18 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
-                              "NameofKitten", "Name of Kitten"],
-                "placeholder": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
-                                "NameofKitten", "Name of Kitten"],
-                "name": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
-                         "NameofKitten", "Name of Kitten"],
-                "id": ["Kitten", "KittenName", "Name Kitten", "Kitten Name", "NameKitten",
-                       "NameofKitten", "Name of Kitten"],
+                "data-name": ["kitten", "name kitten", "kitten name", "nameofkitten", "your kitten name",
+                              "your-petname",
+                              "name of kitten", "kitten of interest", "chosen kitten!", "chosen kitten",
+                              "kitten's name"],
+                "placeholder": ["kitten", "name kitten", "kitten name", "nameofkitten", "your kitten name",
+                                "your-petname",
+                                "name of kitten", "kitten of interest", "chosen kitten!", "chosen kitten",
+                                "kitten's name"],
+                "name": ["kitten", "name kitten", "kitten name", "nameofkitten", "your kitten name", "your-petname",
+                         "name of kitten", "kitten of interest", "chosen kitten!", "chosen kitten", "kitten's name"],
+                "id": ["kitten", "name kitten", "kitten name", "nameofkitten", "your kitten name", "your-petname",
+                       "name of kitten", "kitten of interest", "chosen kitten!", "chosen kitten", "kitten's name"],
             }
         },
         "Puppy": {
@@ -188,14 +197,18 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["Puppy", "PuppyName", "Name Puppy", "Puppy Name", "NamePuppy", "NameofPuppy",
-                              "Name of Puppy"],
-                "placeholder": ["Puppy", "PuppyName", "Name Puppy", "Puppy Name", "NamePuppy",
-                                "NameofPuppy", "Name of Puppy"],
-                "name": ["Puppy", "Name Puppy", "Puppy Name", "NamePuppy", "NameofPuppy",
-                         "Name of Puppy"],
-                "id": ["Puppy", "PuppyName", "Name Puppy", "Puppy Name", "PuppyName", "NamePuppy", "NameofPuppy",
-                       "Name of Puppy"],
+                "data-name": ["puppy", "puppyname", "name puppy", "puppy name", "nameofpuppy", "your puppy name",
+                              "your-petname",
+                              "name of puppy", "puppy of interest", "chosen puppy!", "chosen puppy", "puppy's name"],
+                "placeholder": ["puppy", "puppyname", "name puppy", "puppy name", "nameofpuppy", "your puppy name",
+                                "your-petname",
+                                "name of puppy", "puppy of interest", "chosen puppy!", "chosen puppy", "puppy's name"],
+                "name": ["puppy", "puppyname", "name puppy", "puppy name", "nameofpuppy", "your puppy name",
+                         "your-petname",
+                         "name of puppy", "puppy of interest", "chosen puppy!", "chosen puppy", "puppy's name"],
+                "id": ["puppy", "puppyname", "name puppy", "puppy name", "nameofpuppy", "your puppy name",
+                       "your-petname",
+                       "name of puppy", "puppy of interest", "chosen puppy!", "chosen puppy", "puppy's name"],
             }
         },
         "Dog Breed": {
@@ -204,10 +217,10 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["Dog Breed", "DogBreed"],
-                "placeholder": ["Dog Breed", "DogBreed"],
-                "name": ["Dog Breed", "DogBreed"],
-                "id": ["Dog Breed", "DogBreed"],
+                "data-name": ["dog breed", "dogbreed", "breed of dog", "dog breed name", "dog breedname"],
+                "placeholder": ["dog breed", "dogbreed", "breed of dog", "dog breed name", "dog breedname"],
+                "name": ["dog breed", "dogbreed", "breed of dog", "dog breed name", "dog breedname"],
+                "id": ["dog breed", "dogbreed", "breed of dog", "dog breed name", "dog breedname"],
             }
         },
         "Cat Breed": {
@@ -216,10 +229,10 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["Cat Breed", "CatBreed"],
-                "placeholder": ["Cat Breed", "CatBreed"],
-                "name": ["Cat Breed", "CatBreed"],
-                "id": ["Cat Breed", "CatBreed"],
+                "data-name": ["cat breed", "catbreed", "breed of cat", "cat breed name", "cat breedname"],
+                "placeholder": ["cat breed", "catbreed", "breed of cat", "cat breed name", "cat breedname"],
+                "name": ["cat breed", "catbreed", "breed of cat", "cat breed name", "cat breedname"],
+                "id": ["cat breed", "catbreed", "breed of cat", "cat breed name", "cat breedname"],
             }
         }
     }
@@ -511,39 +524,44 @@ def autofill_form():
     # Checkboxes and select elements
     select_random_checkbox()
     select_random_option()
-    time.sleep(2)
+    time.sleep(3)
 
-    # try:
-    #     submit_button = driver.find_element(By.CSS_SELECTOR,
-    #                                         'button[type="submit"], input[type="submit"]')
-    #     if submit_button:
-    #         submit_button.click()
-    #         submission_successful = WebDriverWait(driver, 10).until(AnyOf(
-    #             EC.url_changes(driver.current_url),
-    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
-    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
-    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
-    #             EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
-    #         ))
-    #         if submission_successful:
-    #             current_url = driver.current_url
-    #             save_to_cache(email, sol_name, username, current_url)
-    #             print("Form submitted successfully!")
-    #             return True
-    #         else:
-    #             print("Form submission might not be successful.")
-    #             return False
-    #     else:
-    #         print("Submit button not found")
-    #         return False
-    #
-    # except TimeoutException:
-    #     print("Form submission failed or confirmation not found.")
-    # pass
+    try:
+        submit_button = driver.find_element(By.CSS_SELECTOR,
+                                            'button[type="submit"], input[type="submit"]')
+        if submit_button:
+            submit_button.click()
+            submission_successful = WebDriverWait(driver, 10).until(AnyOf(
+                EC.url_changes(driver.current_url),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'submitted')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'was sent')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'has been sent')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'received')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'we will be in touch')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
+                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
+            ))
+            if submission_successful:
+                current_url = driver.current_url
+                save_to_cache(email, sol_name, username, current_url)
+                print("Form submitted successfully!")
+                return True
+            else:
+                print("Form submission might not be successful.")
+                return False
+        else:
+            print("Submit button not found")
+            return False
+
+    except TimeoutException:
+        print("Form submission failed or confirmation not found.")
+    pass
 
 
 def main():
-    input_file = 'urls/input_urls.json'
+    input_file = 'input_urls.json'
     urls = read_urls_from_json(input_file)
 
     success_urls = []
@@ -566,8 +584,8 @@ def main():
 
     driver.quit()
 
-    success_file = 'urls/success_urls.json'
-    fail_file = 'urls/fail_urls.json'
+    success_file = 'success/form-fill1.json'
+    fail_file = "fail/form-fill1.json"
     write_urls_to_json(success_file, success_urls)
     write_urls_to_json(fail_file, fail_urls)
 

@@ -22,5 +22,11 @@
         "success_rate": 93.88379204892966,
         "scraped_links": 307,
         "attempted_links": 327
+    },
+    "formfill_crawl_Mar_12_at_1122": {
+        "timestamp": "Mar 12 at 11:22",
+        "success_rate": 50.0,
+        "scraped_links": 5,
+        "attempted_links": 10
     }
 }
