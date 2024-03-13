@@ -4,12 +4,13 @@ import time
 from datetime import datetime, timedelta
 from os import listdir
 from os.path import isfile, join
+
+from archiver import archive
 from secret import API_KEY, API_BASE_URL
 from email.utils import parsedate_to_datetime
 from secret import CRAWLER_PROG_DIR, ADDR_SOL_PATH, MAIL_HANDLED_DIR, MAIL_SAVE_DIR
 
 logs_url = f'{API_BASE_URL}/events'
-
 
 # Get the current UTC date and time
 now_utc = datetime.utcnow()
@@ -116,6 +117,7 @@ def get_mailgun_logs():
 
             # Extract the date from the email and convert it to a Unix timestamp
             date_header = full_email.get('Date', '')
+            timestamp = int(time.time())
             if date_header:
                 email_datetime = parsedate_to_datetime(date_header)
                 timestamp = int(time.mktime(email_datetime.timetuple()))
@@ -135,8 +137,13 @@ def get_mailgun_logs():
                     full_email = stored_response.json()
 
                     stored_email = format_email(full_email)
+                    scam_email = stored_email.get('from')
+                    bait_email = stored_email.get('bait_email')
+                    subject = stored_email.get('title')
+                    body = stored_email.get('content')
 
                     update_record(stored_email)
+                    archive(True, scam_email, bait_email, subject, body, timestamp)
 
                     # write the email to a file and save it to MAIL_SAVE_DIR
                     with open(MAIL_SAVE_DIR + filename, 'w') as email_file:

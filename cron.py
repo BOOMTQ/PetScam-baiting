@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import sys
+import time
 import traceback
 
 import crawler
@@ -72,6 +73,7 @@ def main(crawl=True):
 
                 # Add Signature
                 res_text += f"\n\nBest wishes,\n{stored_info.username}"
+                timestamp = int(time.time())
 
                 send_result = mailgun.send_email(stored_info.username, stored_info.addr, scam_email, subject, res_text)
                 if send_result:
@@ -83,8 +85,7 @@ def main(crawl=True):
                         os.makedirs(MAIL_HANDLED_DIR)
                     shutil.move(email_path, os.path.join(MAIL_HANDLED_DIR, email_filename))
 
-                    archive(True, scam_email, bait_email, subject, text)
-                    archive(False, scam_email, bait_email, subject, res_text)
+                    archive(False, scam_email, bait_email, subject, res_text, timestamp)
             except Exception as e:
                 print(e)
                 print(traceback.format_exc())
