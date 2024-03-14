@@ -1,3 +1,5 @@
+import queue
+import threading
 import traceback
 
 from selenium import webdriver
@@ -285,44 +287,26 @@ def filter_elements(max_depth=2):
     result = {}
     try:
         element_cache = {}
-        for key, value in tqdm(target_map.items()):
+        threads = []
+        share_queue = queue.Queue()
+        for i, (key, value) in enumerate(tqdm(target_map.items())):
             if value["element"] not in element_cache:
                 elements = base.find_elements(By.TAG_NAME, value["element"])
                 element_cache[value["element"]] = elements
             else:
                 elements = element_cache[value["element"]]
-            for element in elements:
-                attrs = {}
-                if value.get("force", False):
-                    result[key] = element
-                for name, target_values in value.get("require", {}).items():
-                    if element.get_attribute(name) != target_values:
-                        break
-                content = get_parent_element_text_iter(element, depth=max_depth)
-                bro_content = get_bro_text_list_iter(element, depth=max_depth - 1)
-                bro_content += [content]
-                for name, target_values in value["options"].items():
-                    if len(attrs.keys()) > 0:
-                        break
-                    if type(target_values) == str:
-                        target_values = [target_values]
-                    for target_value in target_values:
-                        v = element.get_attribute(name)
-                        if v is not None and (
-                                target_value.lower() == v.lower() or (target_value.lower() in v.lower() and len(
-                            v.lower().replace(target_value.lower(), '').replace(' ', '')) < 3)):
-                            attrs[name] = v
-                            break
-                        for c in bro_content:
-                            if c is not None and len(c) > 0:
-                                score = process.extractOne(target_value.lower(), [c.lower()])[1]
-                                if score > 90:
-                                    attrs[name] = c
-                                    print(f"parent text: {c} / {target_value} with score {score}")
-                                    break
-                if len(attrs.keys()) > 0:
-                    result[key] = element
-                    break 
+            thread = threading.Thread(target=parallel_worker, args=(elements, key, value, max_depth, i, share_queue))
+            thread.start()
+            threads.append(thread)
+        for thread in tqdm(threads):
+            thread.join()
+
+        lst = []
+        while not share_queue.empty():
+            lst.append(share_queue.get())
+        for key, value in lst:
+            result[key] = value
+
     except Exception as e:
         traceback.print_exc()
         print(f"An error occurred while filtering elements: {e}")
@@ -566,7 +550,7 @@ i = 0
 def autofill_form():
     global i
     data = {}
-    matched_elements = filter_elements()
+    matched_elements = filter_elements(max_depth=2)
 
     email = get_random_addr()
     username = names.get_first_name()
@@ -689,6 +673,7 @@ def main():
                 fail_urls.append(url)
             time.sleep(2)
         except Exception as e:
+            traceback.print_exc()
             print(f"An error occurred with {url}: {e}")
             fail_urls.append(url)
             # continue
