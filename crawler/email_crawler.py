@@ -48,7 +48,7 @@ def format_email(email_data):
     return formatted_email
 
 
-def update_record(formatted_email):
+def update_record(formatted_email, timestamp):
     with open(CRAWLER_PROG_DIR, 'r') as f:
         cache_data = json.load(f)
 
@@ -62,7 +62,8 @@ def update_record(formatted_email):
                 "bait_email": bait_email,
                 "sol": cache.get('sol', ''),
                 "scam_email": scam_email,
-                "username": cache.get('username', '')
+                "username": cache.get('username', ''),
+                "first_timestamp": timestamp
             }
             # Update record.json
             try:
@@ -82,7 +83,8 @@ def update_record(formatted_email):
                     records[record['bait_email']] = {
                         "sol": record.get('sol', ''),
                         "to": record.get('scam_email', ''),
-                        "username": record.get('username', '')
+                        "username": record.get('username', ''),
+                        "first_timestamp": timestamp
                     }
                     print(f"Added new record for bait email: {record['bait_email']}")
 
@@ -142,7 +144,7 @@ def get_mailgun_logs():
                     subject = stored_email.get('title')
                     body = stored_email.get('content')
 
-                    update_record(stored_email)
+                    update_record(stored_email, timestamp)
                     archive(True, scam_email, bait_email, subject, body, timestamp)
 
                     # write the email to a file and save it to MAIL_SAVE_DIR
