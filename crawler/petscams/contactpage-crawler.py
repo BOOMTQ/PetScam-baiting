@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import requests
 from bs4 import BeautifulSoup
@@ -65,6 +66,7 @@ def save_urls(scam_urls, success_filename, fail_filename):
 
 
 def main():
+    start_time = int(time.time())
     urls = read_urls()
     results = {'success': [], 'fail': []}
     attempted_links = 0
@@ -79,7 +81,7 @@ def main():
             print(f"Contact page not found for {url}")
 
     save_urls(results, 'contact-page1.json', 'contact-page1.json')
-    success_rate = calculate_success_rate('contactpage_crawl', results['success'], attempted_links)
+    success_rate = calculate_success_rate('contactpage_crawl', results['success'], attempted_links, start_time)
     print(f"Success rate: {success_rate:.2f}%")
 
 

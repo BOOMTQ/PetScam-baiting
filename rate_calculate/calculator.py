@@ -8,7 +8,7 @@ from secret import RATE_RESULT_FILE
 rate_results_file = RATE_RESULT_FILE
 
 
-def calculate_success_rate(crawler_name, scraped_links, attempted_links):
+def calculate_success_rate(crawler_name, scraped_links, attempted_links, start_time):
     if attempted_links == 0:
         return 0  # avoid division by zero
     else:
@@ -26,7 +26,8 @@ def calculate_success_rate(crawler_name, scraped_links, attempted_links):
 
     # Record the result for this specific crawl
     rate_results[crawl_id] = {
-        "timestamp": timestamp,
+        "start_time": start_time,
+        "end_time": timestamp,
         "success_rate": success_rate,
         "scraped_links": len(scraped_links),
         "attempted_links": attempted_links
