@@ -333,6 +333,43 @@ def filter_elements(max_depth=2):
     return result
 
 
+def parallel_worker(elements, key, value, max_depth, i, share_queue: queue.Queue):
+    print(f"     Thread {i} start")
+    for element in elements:
+        attrs = {}
+        if value.get("force", False):
+            share_queue.put((key, element))
+            # result[key] = element
+        for name, target_values in value.get("require", {}).items():
+            if element.get_attribute(name) != target_values:
+                break
+        content = get_parent_element_text_iter(element, depth=max_depth)
+        bro_content = get_bro_text_list_iter(element, depth=max_depth - 1)
+        bro_content += [content]
+        for name, target_values in value["options"].items():
+            if len(attrs.keys()) > 0:
+                break
+            if type(target_values) == str:
+                target_values = [target_values]
+            for target_value in target_values:
+                v = element.get_attribute(name)
+                if v is not None and (
+                        target_value.lower() == v.lower() or (target_value.lower() in v.lower() and len(
+                    v.lower().replace(target_value.lower(), '').replace(' ', '')) < 3)):
+                    attrs[name] = v
+                    break
+                for c in bro_content:
+                    if c is not None and len(c) > 0:
+                        score = process.extractOne(target_value.lower(), [c.lower()])[1]
+                        if score > 90:
+                            attrs[name] = c
+                            print(f"parent text: {c} / {target_value} with score {score}")
+                            break
+        if len(attrs.keys()) > 0:
+            share_queue.put((key, element))
+    print(f"     Thread {i} end")
+
+
 def select_random_checkbox():
     try:
         checkboxes = driver.find_elements(By.CSS_SELECTOR, 'input[type="checkbox"], input[type="radio"]')
