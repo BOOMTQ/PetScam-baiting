@@ -1,7 +1,7 @@
 import traceback
 
 from selenium import webdriver
-from selenium.common import TimeoutException, ElementNotInteractableException, NoSuchElementException
+from selenium.common import TimeoutException, ElementNotInteractableException
 from selenium.webdriver.chrome.service import Service
 import time
 import random
@@ -19,13 +19,22 @@ from tqdm import tqdm
 from solution_manager import get_random_addr
 from responder.Message_Replier import investigator, newbies, bargainer, impatient_consumer
 from rate_calculate.calculator import calculate_success_rate
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.chrome.options import Options
 
+# 启用Chrome的日志记录
+capabilities = DesiredCapabilities.CHROME
+capabilities['goog:loggingPrefs'] = {'performance': 'ALL'}
+chrome_options = Options()
+# 启用日志记录
+chrome_options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
 service = Service(executable_path=driver_path)
-driver = webdriver.Chrome(service=service)
+driver = webdriver.Chrome(service=service, options=chrome_options)
 
 sol_index = 0
 sols = [investigator, newbies, bargainer, impatient_consumer]
+
 
 
 def get_parent_element(element):
@@ -126,14 +135,15 @@ def filter_elements(max_depth=2):
                 "type": "text"
             },
             "options": {
-                "data-name": ["state/city", "state", "state / city", "city/state", "city / state",
-                              "state / address", "location/state", "state/location", "your-state", "your-cs"],
+                "data-name": ["state/city", "state", "state / city", "city/state", "city / state", "your state"
+                                                                                                   "state / address",
+                              "location/state", "state/location", "your-state", "your-cs"],
                 "placeholder": ["state/city", "state", "state / city", "city/state", "city / state",
-                                "state / address", "location/state", "state/location"],
+                                "state / address", "location/state", "state/location", "your state"],
                 "name": ["state/city", "state", "state / city", "city/state", "city / state",
-                         "state / address", "location/state", "state/location"],
+                         "state / address", "location/state", "state/location", "your state"],
                 "id": ["state/city", "state", "state / city", "city/state", "city / state",
-                       "state / address", "location/state", "state/location"]
+                       "state / address", "location/state", "state/location", "your state"]
             }
         },
         "city": {
@@ -143,13 +153,13 @@ def filter_elements(max_depth=2):
             },
             "options": {
                 "data-name": ["city", "city / address", "province", "city / province", "province / city",
-                              "province/city", "city/province", "location/city", "city/location"],
+                              "province/city", "city/province", "location/city", "city/location", "your city"],
                 "placeholder": ["city", "city / address", "province", "city / province", "province / city",
-                                "province/city", "city/province", "location/city", "city/location"],
+                                "province/city", "city/province", "location/city", "city/location", "your city"],
                 "name": ["city", "city / address", "province", "city / province", "province / city",
-                         "province/city", "city/province", "location/city", "city/location"],
+                         "province/city", "city/province", "location/city", "city/location", "your city"],
                 "id": ["city", "city / address", "province", "city / province", "province / city",
-                       "province/city", "city/province", "location/city", "city/location"]
+                       "province/city", "city/province", "location/city", "city/location", "your city"]
             }
         },
         "subject": {
@@ -435,11 +445,14 @@ def save_to_cache(email, sol_name, username, url):
             except json.JSONDecodeError:
                 cache_data = []
 
+    form_filled_time = round(time.time())
+
     cache_data.append({
         "bait_email": email,
         "sol": sol_name,
         "username": username,
-        "url": url
+        "url": url,
+        "form_filled_time": form_filled_time
     })
 
     with open(cache_file_path, 'w') as file:
@@ -530,19 +543,40 @@ def autofill_form():
         submit_button = driver.find_element(By.CSS_SELECTOR,
                                             'button[type="submit"], input[type="submit"]')
         if submit_button:
+            driver.execute_script(jsScript)
+            print("click button")
             submit_button.click()
-            submission_successful = WebDriverWait(driver, 10).until(AnyOf(
-                EC.url_changes(driver.current_url),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'submitted')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'was sent')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'has been sent')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'received')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'we will be in touch')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
-                EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
-            ))
+            TIMEOUT = 10
+            start = time.time()
+            submission_successful = False
+            print("start wait log")
+            while time.time() - start < TIMEOUT:
+                time.sleep(0.5)
+                data = driver.execute_script("return localStorage.getItem('interceptedData');")
+                if data:
+                    intercepted_requests = json.loads(data)
+                    for intercepted_request in intercepted_requests:
+                        if intercepted_request['method'] == 'POST':
+                            if intercepted_request['status'] == 200 and "fail" not in intercepted_request[
+                                'responseBody']:
+                                submission_successful = True
+                            else:
+                                break
+            print("end for wait")
+            if not submission_successful:
+                submission_successful = WebDriverWait(driver, 10).until(AnyOf(
+                    EC.url_changes(driver.current_url),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thanks')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'in touch')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'was sent')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'has been sent')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'received')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
+                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
+                ))
+
             if submission_successful:
                 current_url = driver.current_url
                 save_to_cache(email, sol_name, username, current_url)
@@ -563,6 +597,7 @@ def autofill_form():
 def main():
     input_file = 'input_urls.json'
     urls = read_urls_from_json(input_file)
+    start_time = int(time.time())
 
     success_urls = []
     fail_urls = []
@@ -589,7 +624,7 @@ def main():
     write_urls_to_json(success_file, success_urls)
     write_urls_to_json(fail_file, fail_urls)
 
-    success_rate = calculate_success_rate("formfill_crawl", success_urls, attempted_links)
+    success_rate = calculate_success_rate("formfill_crawl", success_urls, attempted_links, start_time)
     print(f"Success rate: {success_rate:.2f}%")
 
 
