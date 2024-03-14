@@ -35,6 +35,41 @@ driver = webdriver.Chrome(service=service, options=chrome_options)
 sol_index = 0
 sols = [investigator, newbies, bargainer, impatient_consumer]
 
+jsScript = """
+(function() {
+    var originalSend = XMLHttpRequest.prototype.send;
+    var originalOpen = XMLHttpRequest.prototype.open;
+
+    XMLHttpRequest.prototype.open = function(method, url) {
+        this._method = method;
+        this._url = url;
+        return originalOpen.apply(this, arguments);
+    };
+
+    XMLHttpRequest.prototype.send = function(body) {
+        this._body = JSON.stringify(body); // 保存请求体的副本
+
+        this.onreadystatechange = () => {
+            if (this.readyState === 4) { // 请求完成
+                var data = {
+                    method: this._method,
+                    url: this._url,
+                    status: this.status,
+                    statusText: this.statusText,
+                    requestHeaders: this.getAllResponseHeaders(),
+                    requestBody: this._body, // 使用保存的副本
+                    responseBody: this.responseText
+                };
+                var existingData = JSON.parse(localStorage.getItem('interceptedData') || '[]');
+                existingData.push(data);
+                localStorage.setItem('interceptedData', JSON.stringify(existingData));
+            }
+        };
+        return originalSend.apply(this, arguments);
+    };
+})();
+
+"""
 
 
 def get_parent_element(element):
@@ -249,8 +284,13 @@ def filter_elements(max_depth=2):
     base = driver.find_element(By.TAG_NAME, 'form')
     result = {}
     try:
+        element_cache = {}
         for key, value in tqdm(target_map.items()):
-            elements = base.find_elements(By.TAG_NAME, value["element"])
+            if value["element"] not in element_cache:
+                elements = base.find_elements(By.TAG_NAME, value["element"])
+                element_cache[value["element"]] = elements
+            else:
+                elements = element_cache[value["element"]]
             for element in elements:
                 attrs = {}
                 if value.get("force", False):
@@ -280,10 +320,9 @@ def filter_elements(max_depth=2):
                                     attrs[name] = c
                                     print(f"parent text: {c} / {target_value} with score {score}")
                                     break
-
                 if len(attrs.keys()) > 0:
                     result[key] = element
-                    break
+                    break 
     except Exception as e:
         traceback.print_exc()
         print(f"An error occurred while filtering elements: {e}")
