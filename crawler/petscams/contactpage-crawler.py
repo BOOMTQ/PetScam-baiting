@@ -46,7 +46,7 @@ def get_contact_page(url):
     return None
 
 
-def read_urls(filename='pet-scams1.json'):
+def read_urls(filename='scam-webs/pet-scams1.json'):
     with open(filename, 'r') as file:
         return json.load(file)
 
@@ -80,7 +80,7 @@ def main():
             results['fail'].append(url)
             print(f"Contact page not found for {url}")
 
-    save_urls(results, 'contact-page1.json', 'contact-page1.json')
+    save_urls(results, 'form1.json', 'form1.json')
     success_rate = calculate_success_rate('contactpage_crawl', results['success'], attempted_links, start_time)
     print(f"Success rate: {success_rate:.2f}%")
 

@@ -1,5 +1,4 @@
 from happytransformer import HappyGeneration, GENSettings
-# HappyGeneration用于文本生成，同时GENSettings允许您自定义生成设置。
 
 gen_settings = GENSettings(
     min_length=20,

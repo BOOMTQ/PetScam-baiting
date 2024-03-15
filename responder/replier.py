@@ -1,10 +1,8 @@
-import os.path
 from abc import ABC, abstractmethod
 
 from text_utils.text_filter import *
 from .Chatgpt_Replier import investigator, newbies, bargainer, impatient
 
-from secret import MAIL_ARCHIVE_DIR
 
 text_filters = [
     RemoveSymbolLineTextFilter(),

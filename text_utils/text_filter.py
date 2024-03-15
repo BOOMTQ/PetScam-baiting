@@ -1,7 +1,6 @@
 import re
 
 import enchant
-from enchant.checker import SpellChecker
 
 NEWLINE_PATTERN = re.compile("<br>|\n")
 dictionary = enchant.Dict("en_US")

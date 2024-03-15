@@ -14,12 +14,15 @@ On https://petscams.com/, which have listed known pet scam and delivery scam web
 4. The Impatient Enthusiast
 
 ## Project execution process
-The complete execution process of the entire project is as follows:
-1. To get pet scam websites: run ./crawler/petscams/petscam_crawl.py, then run ./crawler/petscams/contactpage-crawler.py
-2. To automatedly fill in the contact form: run ./crawler/formfill_crawler.py 
-3. Waiting for the scam emails from pet scammers...
-4. Fetching the received scam emails and automatedly sending bait emails: run ./corn.py
-5. According to the email conversations of each repliers saved in ./emails/archive. Count the difference in timestamp and comparatively analyse the time wasted by scammers at different repliers.
+This experiment will be start on 15th March 3.30pm, last for 4 weeks, which is expected to end on 12th April. In the experiment, the following procedure will be repeated four times, taking the first time as an example:
+1. To get petscam websites: run ./crawler/petscams/petscam_crawl.py, then all the scam websites which are listed in recent 30 days will be saved in scam-webs/pet-scams1.json.
+2. To get contact form urls: run ./crawler/petscams/contactpage-crawler.py, then most of the vaild contact form urls will be saved success/in form1.json.
+3. To automatedly fill in the contact form: run ./crawler/petscams/formfill_crawler.py. then the contact forms information will be saved in crawler/cache.json
+4. Waiting for the scam emails from pet scammers...
+5. Fetching the received scam emails and automatedly sending bait emails: run ./corn.py, then the email information will be saved in emails/record.json, and also the sol_counts will be updated in models/history.json
+
+## Data analysis
+1. The runtime of each crawler can be checked in rate_calculate/rate_result.json.
 
 ## Essential resources
 1. Github Student Developer Pack on https://education.github.com/pack, in order to use tools like name.com and mailgun for free:

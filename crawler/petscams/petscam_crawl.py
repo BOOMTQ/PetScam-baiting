@@ -22,7 +22,7 @@ def is_broken_link(url):
     return False
 
 
-def save_broken_links(broken_links, filename='broken/websites1.json'):
+def save_broken_links(broken_links, filename='broken/contact1.json'):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     with open(filename, 'w') as file:
         json.dump(broken_links, file, indent=4)
@@ -77,7 +77,7 @@ def get_web(base_url, days=30, max_pages=40):
     return list(scam_links), attempted_links, broken_links
 
 
-def save_url(scam_urls, filename='pet-scams1.json'):
+def save_url(scam_urls, filename='scam-webs/pet-scams1.json'):
     with open(filename, 'w') as file:
         json.dump(scam_urls, file, indent=4)
 

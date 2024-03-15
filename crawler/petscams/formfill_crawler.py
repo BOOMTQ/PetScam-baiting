@@ -132,12 +132,13 @@ def filter_elements(max_depth=2):
             "options": {
                 "type": ["tel", "number"],
                 "data-name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel",
-                              "your-number"],
+                              "your-number", "cell phone number", "cell phone", "mobile", "mobile number", "cellphone"],
                 "placeholder": ["phone", "phone number", "your phone", "your phone number", "number", "telephone",
-                                "tel", "your-number"],
+                                "tel", "your-number", "cell phone number", "cell phone", "mobile", "mobile number", "cellphone"],
                 "name": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel",
-                         "your-number"],
-                "id": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel"]
+                         "your-number", "cell phone number", "cell phone", "mobile", "mobile number", "cellphone"],
+                "id": ["phone", "phone number", "number", "your phone", "your phone number", "telephone", "tel",
+                       "cell phone number", "cell phone", "mobile", "mobile number", "cellphone"]
             }
         },
         "email": {
@@ -617,8 +618,7 @@ def autofill_form():
                     intercepted_requests = json.loads(data)
                     for intercepted_request in intercepted_requests:
                         if intercepted_request['method'] == 'POST':
-                            if intercepted_request['status'] == 200 and "fail" not in intercepted_request[
-                                'responseBody']:
+                            if intercepted_request['status'] == 200 and "fail" not in intercepted_request['responseBody']:
                                 submission_successful = True
                             else:
                                 break
@@ -628,7 +628,6 @@ def autofill_form():
                     EC.url_changes(driver.current_url),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thanks')]")),
-                    EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'in touch')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'was sent')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'has been sent')]")),
@@ -636,7 +635,6 @@ def autofill_form():
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successful')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'successfully')]"))
                 ))
-
             if submission_successful:
                 current_url = driver.current_url
                 save_to_cache(email, sol_name, username, current_url)
@@ -655,7 +653,7 @@ def autofill_form():
 
 
 def main():
-    input_file = 'input_urls.json'
+    input_file = 'success/form1.json'
     urls = read_urls_from_json(input_file)
     start_time = int(time.time())
 

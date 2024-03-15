@@ -20,7 +20,7 @@ def calculate_success_rate(crawler_name, scraped_links, attempted_links, start_t
         with open(rate_results_file, 'r') as file:
             rate_results = json.load(file)
 
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%b %d at %H:%M')
+    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('%b %d at %H:%M:%S')
 
     crawl_id = f"{crawler_name}_{timestamp.replace(' ', '_').replace(':', '')}"
 

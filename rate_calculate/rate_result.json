@@ -1,32 +1,23 @@
 {
-    "petscam_crawl_Mar_11_at_0428": {
-        "timestamp": "Mar 11 at 04:28",
+    "petscam_crawl_Mar_15_at_154209": {
+        "start_time": 1710516627,
+        "end_time": "Mar 15 at 15:42:09",
         "success_rate": 100.0,
-        "scraped_links": 460,
-        "attempted_links": 460
+        "scraped_links": 334,
+        "attempted_links": 334
     },
-    "contactpage_crawl_Mar_11_at_1502": {
-        "timestamp": "Mar 11 at 15:02",
-        "success_rate": 71.30434782608695,
-        "scraped_links": 328,
-        "attempted_links": 460
+    "contactpage_crawl_Mar_15_at_155031": {
+        "start_time": 1710517445,
+        "end_time": "Mar 15 at 15:50:31",
+        "success_rate": 95.80838323353294,
+        "scraped_links": 320,
+        "attempted_links": 334
     },
-    "petscam_crawl_Mar_11_at_1951": {
-        "timestamp": "Mar 11 at 19:51",
-        "success_rate": 100.0,
-        "scraped_links": 327,
-        "attempted_links": 327
-    },
-    "contactpage_crawl_Mar_11_at_2002": {
-        "timestamp": "Mar 11 at 20:02",
-        "success_rate": 93.88379204892966,
-        "scraped_links": 307,
-        "attempted_links": 327
-    },
-    "formfill_crawl_Mar_12_at_1122": {
-        "timestamp": "Mar 12 at 11:22",
-        "success_rate": 50.0,
-        "scraped_links": 5,
-        "attempted_links": 10
+    "formfill_crawl_Mar_15_at_184530": {
+        "start_time": 1710519076,
+        "end_time": "Mar 15 at 18:45:30",
+        "success_rate": 44.92307692307692,
+        "scraped_links": 146,
+        "attempted_links": 325
     }
 }
