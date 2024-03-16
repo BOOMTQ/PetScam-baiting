@@ -5,27 +5,29 @@ import sys
 import time
 import traceback
 
-import crawler
 import tiktoken
-
 import mailgun
 import responder
 import solution_manager
+from rate_calculate.calculator import email_reply_rate
 from secret import MAIL_SAVE_DIR, MAIL_HANDLED_DIR
 from archiver import archive
 
 
 def main(crawl=True):
+    start_time = int(time.time())
+    attempted_replies = 0
+    successful_replies = 0
+
     if crawl:
-        crawler.crawl_email()  # run all the income email first
-        # pass
+        pass
 
     # Handle incoming emails
     email_filenames = os.listdir(MAIL_SAVE_DIR)
     count = 0
 
     for email_filename in email_filenames:
-        if count < 51:
+        if count < 201:
             try:
                 print(f"Handling {email_filename}")
                 email_path = os.path.join(MAIL_SAVE_DIR, email_filename)
@@ -33,12 +35,13 @@ def main(crawl=True):
                     email_obj = json.load(f)
 
                 text = email_obj["content"]
+                attempted_replies += 1
 
-                encoding = tiktoken.encoding_for_model("gpt-3.5-turbo-0125")
+                encoding = tiktoken.encoding_for_model("gpt-4-0125-preview")
                 num_tokens = len(encoding.encode(text))
-                if num_tokens > 900:
+                if num_tokens > 29000:
                     print("This email is too long")
-                    os.remove(email_path)
+                    # os.remove(email_path)
                     continue
 
                 subject = str(email_obj["title"])
@@ -77,6 +80,7 @@ def main(crawl=True):
 
                 send_result = mailgun.send_email(stored_info.username, stored_info.addr, scam_email, subject, res_text)
                 if send_result:
+                    successful_replies += 1
                     print(f"Successfully sent response to {scam_email}")
                     count += 1
 
@@ -90,9 +94,13 @@ def main(crawl=True):
                 print(e)
                 print(traceback.format_exc())
         else:
+            print("Too many emails sent, try the rest later.")
             break
     else:
         print("No more emails to reply")
+
+    success_rate = email_reply_rate("email_replier", successful_replies, attempted_replies, start_time)
+    print(f"Email reply success rate: {success_rate}%")
 
 
 if __name__ == '__main__':

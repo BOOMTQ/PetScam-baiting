@@ -19,7 +19,8 @@ This experiment will be start on 15th March 3.30pm, last for 4 weeks, which is e
 2. To get contact form urls: run ./crawler/petscams/contactpage-crawler.py, then most of the vaild contact form urls will be saved success/in form1.json.
 3. To automatedly fill in the contact form: run ./crawler/petscams/formfill_crawler.py. then the contact forms information will be saved in crawler/cache.json
 4. Waiting for the scam emails from pet scammers...
-5. Fetching the received scam emails and automatedly sending bait emails: run ./corn.py, then the email information will be saved in emails/record.json, and also the sol_counts will be updated in models/history.json
+5. Fetching the received scam emails: run ./crawler/petscams/email_crawler.py, then the email information will be saved in emails/record.json.
+6. Automatedly sending bait emails: run ./corn.py, and then the sol_counts will be updated in models/history.json
 
 ## Data analysis
 1. The runtime of each crawler can be checked in rate_calculate/rate_result.json.

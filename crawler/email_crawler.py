@@ -1,13 +1,13 @@
 import requests
 import json
-import time
+
 from datetime import datetime, timedelta
 from os import listdir
 from os.path import isfile, join
 
 from archiver import archive
 from secret import API_KEY, API_BASE_URL
-from email.utils import parsedate_to_datetime
+
 from secret import CRAWLER_PROG_DIR, ADDR_SOL_PATH, MAIL_HANDLED_DIR, MAIL_SAVE_DIR
 
 logs_url = f'{API_BASE_URL}/events'
@@ -19,10 +19,10 @@ now_utc = datetime.utcnow()
 today_utc = datetime.combine(now_utc.date(), datetime.min.time())
 
 # Subtract one day to get the start of yesterday in UTC
-day_before_yesterday_utc = today_utc - timedelta(days=2)
+day_before_today_utc = today_utc - timedelta(days=1)
 
 # Format the date as a string in RFC 2822 format with the UTC offset, include emails in day1, day2 and day3
-two_days_ago = day_before_yesterday_utc.strftime('%a, %d %b %Y %H:%M:%S +0000')
+one_day_ago = day_before_today_utc.strftime('%a, %d %b %Y %H:%M:%S +0000')
 
 downloaded_emails = [f for f in listdir(MAIL_SAVE_DIR) if isfile(join(MAIL_SAVE_DIR, f))]
 handled_emails = [f for f in listdir(MAIL_HANDLED_DIR) if isfile(join(MAIL_HANDLED_DIR, f))]
@@ -105,7 +105,7 @@ def get_mailgun_logs():
     response = requests.get(
         logs_url,
         auth=('api', API_KEY),
-        params={"begin": two_days_ago,
+        params={"begin": one_day_ago,
                 "ascending": "yes",
                 "limit": 200,
                 "event": "stored"}
@@ -114,18 +114,11 @@ def get_mailgun_logs():
     if response.status_code == 200:
         logs_data = response.json()
         for item in logs_data['items']:
-            # Assume full_email is the full email data retrieved from Mailgun
-            full_email = requests.get(item['storage']['url'], auth=('api', API_KEY)).json()
-
-            # Extract the date from the email and convert it to a Unix timestamp
-            date_header = full_email.get('Date', '')
-            timestamp = int(time.time())
-            if date_header:
-                email_datetime = parsedate_to_datetime(date_header)
-                timestamp = int(time.mktime(email_datetime.timetuple()))
-                filename = f"mailgun_email_{timestamp}.json"
-            else:
-                filename = f"mailgun_email_{int(time.time())}.json"
+            # Use the timestamp from the Mailgun event log
+            mailgun_timestamp = item['timestamp']
+            # Convert Mailgun's timestamp (which is in UTC seconds) to a Unix timestamp
+            timestamp = int(mailgun_timestamp)
+            filename = f"mailgun_email_{timestamp}.json"
 
             # Only save new emails that haven't been downloaded before
             if filename not in downloaded_emails and filename not in handled_emails:
@@ -144,17 +137,18 @@ def get_mailgun_logs():
                     subject = stored_email.get('title')
                     body = stored_email.get('content')
 
+                    # Pass the Mailgun timestamp to the update_record function
                     update_record(stored_email, timestamp)
                     archive(True, scam_email, bait_email, subject, body, timestamp)
 
                     # write the email to a file and save it to MAIL_SAVE_DIR
-                    with open(MAIL_SAVE_DIR + filename, 'w') as email_file:
+                    with open(join(MAIL_SAVE_DIR, filename), 'w') as email_file:
                         json.dump(stored_email, email_file, indent=4)
                     print(f"Email saved to {filename}")
                 else:
                     print(f"Failed to retrieve stored email. Status code: {stored_response.status_code}")
             else:
-                print(f"This email has been downloaded, please wait for more newest incoming emails")
+                print(f"Email_{timestamp} is in the queue or has been handled. Skipping...")
     else:
         print(f"Failed to retrieve logs. Status code: {response.status_code}")
         print(f"Response content: {response.content.decode()}")
