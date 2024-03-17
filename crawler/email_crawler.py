@@ -21,7 +21,7 @@ today_utc = datetime.combine(now_utc.date(), datetime.min.time())
 # Subtract one day to get the start of yesterday in UTC
 day_before_today_utc = today_utc - timedelta(days=1)
 
-# Format the date as a string in RFC 2822 format with the UTC offset, include emails in day1, day2 and day3
+# Format the date as a string in RFC 2822 format with the UTC offset, include emails in day1, day2
 one_day_ago = day_before_today_utc.strftime('%a, %d %b %Y %H:%M:%S +0000')
 
 downloaded_emails = [f for f in listdir(MAIL_SAVE_DIR) if isfile(join(MAIL_SAVE_DIR, f))]
