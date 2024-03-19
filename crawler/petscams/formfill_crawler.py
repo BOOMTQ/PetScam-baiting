@@ -641,19 +641,23 @@ def autofill_form():
                 print("Form submitted successfully!")
                 return True
             else:
-                print("Form submission might not be successful.")
+                current_url = driver.current_url
+                save_to_cache(email, sol_name, username, current_url)
+                print("Form submission might not be successful, but the info is also saved in cache.")
                 return False
         else:
             print("Submit button not found")
             return False
 
     except TimeoutException:
-        print("Form submission failed or confirmation not found.")
+        current_url = driver.current_url
+        save_to_cache(email, sol_name, username, current_url)
+        print("Form submission failed or confirmation not found, but the info is also saved in cache.")
     pass
 
 
 def main():
-    input_file = 'success/form1.json'
+    input_file = 'success/form2.json'
     urls = read_urls_from_json(input_file)
     start_time = int(time.time())
 
@@ -678,8 +682,8 @@ def main():
 
     driver.quit()
 
-    success_file = 'success/form-fill1.json'
-    fail_file = "fail/form-fill1.json"
+    success_file = 'success/form-fill2.json'
+    fail_file = "fail/form-fill2.json"
     write_urls_to_json(success_file, success_urls)
     write_urls_to_json(fail_file, fail_urls)
 
