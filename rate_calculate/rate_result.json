@@ -54,5 +54,12 @@
         "success_rate": 100.0,
         "replied_emails": 24,
         "attempted_emails": 24
+    },
+    "email_replier_Mar_20_at_174132": {
+        "start_time": "Mar 20 at 17:36:15",
+        "end_time": "Mar 20 at 17:41:32",
+        "success_rate": 100.0,
+        "replied_emails": 29,
+        "attempted_emails": 29
     }
 }
