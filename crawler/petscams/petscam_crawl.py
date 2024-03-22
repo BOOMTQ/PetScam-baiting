@@ -51,7 +51,7 @@ def get_web(base_url, days=7, max_pages=10):
                         article_date = datetime.datetime.strptime(date_text, '%B %d, %Y')
 
                         if (current_date - article_date).days <= days:
-                            title_tag = article.find('h1', class_='main-title')
+                            title_tag = article.find('h2', class_='main-title')
                             if title_tag:
                                 scam_url = title_tag.get_text().strip()
                                 if not scam_url.startswith('http'):
