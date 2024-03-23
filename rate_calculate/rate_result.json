@@ -93,8 +93,15 @@
     "email_replier_Mar_22_at_172626": {
         "start_time": "Mar 22 at 17:21:32",
         "end_time": "Mar 22 at 17:26:26",
-        "success_rate": 100.0,
-        "replied_emails": 26,
+        "success_rate": 96.15384615384616,
+        "replied_emails": 25,
+        "attempted_emails": 26
+    },
+    "email_replier_Mar_23_at_173451": {
+        "start_time": "Mar 23 at 17:30:58",
+        "end_time": "Mar 23 at 17:34:51",
+        "success_rate": 96.15384615384616,
+        "replied_emails": 25,
         "attempted_emails": 26
     }
 }
