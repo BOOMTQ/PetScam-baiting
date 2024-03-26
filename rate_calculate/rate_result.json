@@ -112,10 +112,17 @@
         "attempted_emails": 25
     },
     "email_replier_Mar_25_at_191929": {
-        "start_time": 1711394175,
+        "start_time": "Mar 25 at 19:16:15",
         "end_time": "Mar 25 at 19:19:29",
         "success_rate": 100.0,
         "replied_emails": 19,
         "attempted_emails": 19
+    },
+    "email_replier_Mar_26_at_181037": {
+        "start_time": "Mar 26 at 18:08:08",
+        "end_time": "Mar 26 at 18:10:37",
+        "success_rate": 100.0,
+        "replied_emails": 15,
+        "attempted_emails": 15
     }
 }
