@@ -1,4 +1,4 @@
-# PetScam-baiting
+# PetScam-baiting(Individual Graduation Project)
 An Automated Response System for Disrupting Online Pet Scamming
 
 ## Project overview
