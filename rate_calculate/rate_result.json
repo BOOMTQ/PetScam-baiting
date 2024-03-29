@@ -138,5 +138,33 @@
         "success_rate": 100.0,
         "replied_emails": 12,
         "attempted_emails": 12
+    },
+    "petscam_crawl_Mar_29_at_154132": {
+        "start_time": "Mar 29 at 15:39:48",
+        "end_time": "Mar 29 at 15:41:32",
+        "success_rate": 100.0,
+        "scraped_links": 45,
+        "attempted_links": 45
+    },
+    "contactpage_crawl_Mar_29_at_154937": {
+        "start_time": "Mar 29 at 15:48:46",
+        "end_time": "Mar 29 at 15:49:37",
+        "success_rate": 88.88888888888889,
+        "scraped_links": 40,
+        "attempted_links": 45
+    },
+    "formfill_crawl_Mar_29_at_162552": {
+        "start_time": "Mar 29 at 16:02:59",
+        "end_time": "Mar 29 at 16:25:52",
+        "success_rate": 61.36363636363637,
+        "scraped_links": 27,
+        "attempted_links": 44
+    },
+    "email_replier_Mar_29_at_170349": {
+        "start_time": "Mar 29 at 17:01:33",
+        "end_time": "Mar 29 at 17:03:49",
+        "success_rate": 100.0,
+        "replied_emails": 17,
+        "attempted_emails": 17
     }
 }

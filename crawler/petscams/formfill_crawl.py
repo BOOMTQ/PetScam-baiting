@@ -657,7 +657,7 @@ def autofill_form():
 
 
 def main():
-    input_file = 'success/form2.json'
+    input_file = 'success/form3.json'
     urls = read_urls_from_json(input_file)
     start_time = int(time.time())
 
@@ -682,8 +682,8 @@ def main():
 
     driver.quit()
 
-    success_file = 'success/form-fill2.json'
-    fail_file = "fail/form-fill2.json"
+    success_file = 'success/form-fill3.json'
+    fail_file = "fail/form-fill3.json"
     write_urls_to_json(success_file, success_urls)
     write_urls_to_json(fail_file, fail_urls)
 
