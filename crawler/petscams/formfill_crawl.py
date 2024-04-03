@@ -49,17 +49,17 @@ jsScript = """
     };
 
     XMLHttpRequest.prototype.send = function(body) {
-        this._body = JSON.stringify(body); // 保存请求体的副本
+        this._body = JSON.stringify(body); // Keep a copy of the request body
 
         this.onreadystatechange = () => {
-            if (this.readyState === 4) { // 请求完成
+            if (this.readyState === 4) { // Request Completion
                 var data = {
                     method: this._method,
                     url: this._url,
                     status: this.status,
                     statusText: this.statusText,
                     requestHeaders: this.getAllResponseHeaders(),
-                    requestBody: this._body, // 使用保存的副本
+                    requestBody: this._body, // Use the saved copies
                     responseBody: this.responseText
                 };
                 var existingData = JSON.parse(localStorage.getItem('interceptedData') || '[]');
