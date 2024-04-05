@@ -53,7 +53,7 @@ def main(crawl=True):
 
                 if stored_info is None:
                     print(f"Cannot found replier for {bait_email}")
-                    os.remove(email_path)
+                    # os.remove(email_path)
                     continue
 
                 print(f"Found selected replier {stored_info.sol}")
@@ -62,7 +62,7 @@ def main(crawl=True):
 
                 if replier is None:
                     print("Replier Sol_name not found")
-                    os.remove(email_path)
+                    # os.remove(email_path)
                     continue
 
                 try:
