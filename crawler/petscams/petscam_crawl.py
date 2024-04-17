@@ -8,7 +8,7 @@ import time
 from rate_calculate.calculator import calculate_success_rate
 
 
-def is_broken_link(url):
+def broken_link(url):
     try:
         response = requests.get(url, timeout=10)
         if (response.status_code != 200 or "Account Suspended" in response.text or "This Account has been suspended" in response.text
@@ -16,7 +16,6 @@ def is_broken_link(url):
                 or "Maintenance mode is on" in response.text or "The content is to be added" in response.text or "Index of /" in response.text
                 or "Welcome to WordPress. This is your first post. Edit or delete it, then start writing!" in response.text):
             return True
-
     except requests.RequestException:
         return True
     return False
@@ -58,7 +57,7 @@ def get_web(base_url, days=7, max_pages=10):
                                     scam_url = 'https://' + scam_url
                                 if scam_url not in scam_links:  # Check if the URL is already in the set
                                     attempted_links += 1
-                                if is_broken_link(scam_url):
+                                if broken_link(scam_url):
                                     broken_links.append(scam_url)
                                 else:
                                     scam_links.add(scam_url)

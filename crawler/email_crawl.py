@@ -19,10 +19,10 @@ bst_zone = pytz.timezone('Europe/London')
 now_utc = datetime.utcnow()
 now_gmt = gmt_zone.localize(now_utc)
 
-is_dst_now = now_gmt.astimezone(bst_zone).dst() != timedelta(0)
+dst_now = now_gmt.astimezone(bst_zone).dst() != timedelta(0)
 
 # check if now is bst_zone(3.31-10.27)
-if is_dst_now:
+if dst_now:
     # transform gmt to bst
     now_bst = now_gmt.astimezone(bst_zone)
     today_bst = now_bst.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -113,7 +113,7 @@ def update_record(formatted_email, timestamp):
         print(f"No matching cache found for bait email: {bait_email}")
 
 
-def get_mailgun_logs():
+def get_logs():
     response = requests.get(
         logs_url,
         auth=('api', API_KEY),
@@ -167,7 +167,7 @@ def get_mailgun_logs():
 
 
 def main():
-    get_mailgun_logs()
+    get_logs()
 
 
 if __name__ == '__main__':

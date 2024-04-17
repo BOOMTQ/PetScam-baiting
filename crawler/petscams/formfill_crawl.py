@@ -24,11 +24,11 @@ from rate_calculate.calculator import calculate_success_rate
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.chrome.options import Options
 
-# 启用Chrome的日志记录
+# Enabling Logging in Chrome
 capabilities = DesiredCapabilities.CHROME
 capabilities['goog:loggingPrefs'] = {'performance': 'ALL'}
 chrome_options = Options()
-# 启用日志记录
+# Enable logging
 chrome_options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
 service = Service(executable_path=driver_path)
