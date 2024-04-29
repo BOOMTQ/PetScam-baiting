@@ -355,7 +355,7 @@ def parallel_worker(elements, key, value, max_depth, i, share_queue: queue.Queue
     print(f"     Thread {i} end")
 
 
-def select_random_checkbox():
+def select_checkbox():
     try:
         checkboxes = driver.find_elements(By.CSS_SELECTOR, 'input[type="checkbox"], input[type="radio"]')
         interactable_checkboxes = [checkbox for checkbox in checkboxes if
@@ -373,7 +373,7 @@ def select_random_checkbox():
         print(f"An unexpected error occurred: {e}")
 
 
-def select_random_option():
+def select_option():
     try:
         select_elements = driver.find_elements(By.TAG_NAME, 'select')
 
@@ -596,8 +596,8 @@ def autofill_form():
     i += 1
 
     # Checkboxes and select elements
-    select_random_checkbox()
-    select_random_option()
+    select_checkbox()
+    select_option()
     time.sleep(3)
 
     try:

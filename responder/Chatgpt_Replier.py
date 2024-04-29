@@ -8,7 +8,7 @@ openai.api_key = OPENAI_API_KEY
 def investigator(prompt):
     prompt = "Reply without any signature :" + prompt
     completion = openai.ChatCompletion.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4-turbo", # the latest gpt-4 model which updated on 9th April
         messages=[
             {"role": "system",
              "content": "Act as an inquisitive investigator, seeking detailed evidence to confirm the pet sale's "
@@ -24,14 +24,14 @@ def investigator(prompt):
     )
     res = completion.choices[0].message.content
     res = re.sub(r"\[.*?\]", "", res)
-    # Regular expression: remove any remaining brackets that may be contained in the response
+    # remove any remaining brackets that may be contained in the response
     return res.strip() # Remove any leading or trailing spaces from the response
 
 
 def newbies(prompt):
     prompt = "Reply without any signature :" + prompt
     completion = openai.ChatCompletion.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4-turbo",
         messages=[
             {"role": "system",
              "content": "Pose as a newbie in pet adoption, showing eagerness but confusion about the process. Ask "
@@ -54,7 +54,7 @@ def newbies(prompt):
 def bargainer(prompt):
     prompt = "Reply without any signature :" + prompt
     completion = openai.ChatCompletion.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4-turbo",
         messages=[
             {"role": "system",
              "content": "As a bargainer, negotiate prices and terms firmly, questioning seller credibility while "
@@ -77,7 +77,7 @@ def bargainer(prompt):
 def impatient(prompt):
     prompt = "Reply without any signature :" + prompt
     completion = openai.ChatCompletion.create(
-        model="gpt-4-0125-preview",
+        model="gpt-4-turbo",
         messages=[
             {"role": "system",
              "content": "You're an impatient customer who often shows anxiety when ordering pets via email, pressing "
