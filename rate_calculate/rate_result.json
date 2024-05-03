@@ -9,8 +9,8 @@
     "contactpage_crawl_Mar_15_at_155031": {
         "start_time": "Mar 15 at 15:44:05",
         "end_time": "Mar 15 at 15:50:31",
-        "success_rate": 95.80838323353294,
-        "scraped_links": 320,
+        "success_rate": 97.30538922155689,
+        "scraped_links": 325,
         "attempted_links": 334
     },
     "formfill_crawl_Mar_15_at_184530": {
@@ -79,8 +79,8 @@
     "contactpage_crawl_Mar_22_at_160743": {
         "start_time": "Mar 22 at 16:06:50",
         "end_time": "Mar 22 at 16:07:43",
-        "success_rate": 88.09523809523809,
-        "scraped_links": 37,
+        "success_rate": 100.0,
+        "scraped_links": 42,
         "attempted_links": 42
     },
     "formfill_crawl_Mar_22_at_170350": {
@@ -149,8 +149,8 @@
     "contactpage_crawl_Mar_29_at_154937": {
         "start_time": "Mar 29 at 15:48:46",
         "end_time": "Mar 29 at 15:49:37",
-        "success_rate": 88.88888888888889,
-        "scraped_links": 40,
+        "success_rate": 97.77777777777778,
+        "scraped_links": 44,
         "attempted_links": 45
     },
     "formfill_crawl_Mar_29_at_162552": {
