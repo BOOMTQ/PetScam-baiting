@@ -20,14 +20,14 @@ if not os.path.exists(MODEL_HISTORY_PATH):
         json.dump(d, f)
 
 
-def get_replier_by_name(name):  # 根据名称返回回复者实例。
+def get_replier_by_name(name):  # Return the replier instance by name
     for r in replier_list:
         if r.name == name:
             return r
     return None
 
 
-def update_replier_history(scam_email, sol_name):  # 更新回复者的选择计数。
+def update_replier_history(scam_email, sol_name):  # Update the history count of the replier
     try:
         with open(MODEL_HISTORY_PATH, "r", encoding="utf8") as f:
             history_data = json.load(f)

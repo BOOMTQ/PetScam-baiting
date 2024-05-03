@@ -8,7 +8,7 @@ txt_archive = MAIL_ARCHIVE_DIR
 history_record = MODEL_HISTORY_PATH
 
 
-def get_emails_and_time_count(file_path):
+def count_time(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
         content = file.read()
 
@@ -24,7 +24,7 @@ def get_emails_and_time_count(file_path):
         return 0, 0
 
 
-def update_history_json(email, new_inbound_count, time_diff_hours, json_file_path):
+def update_history(email, new_inbound_count, time_diff_hours, json_file_path):
     with open(json_file_path, 'r', encoding='utf-8') as file:
         history_data = json.load(file)
 
@@ -51,8 +51,8 @@ def main():
     txt_files = Path(txt_archive).glob('*.txt')
     for txt_file in txt_files:
         email = txt_file.stem
-        new_inbound_count, time_diff_hours = get_emails_and_time_count(txt_file)
-        update_history_json(email, new_inbound_count, time_diff_hours, history_record)
+        new_inbound_count, time_diff_hours = count_time(txt_file)
+        update_history(email, new_inbound_count, time_diff_hours, history_record)
 
 
 if __name__ == '__main__':
