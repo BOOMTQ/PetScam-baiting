@@ -37,7 +37,7 @@ def main(crawl=True):
                 text = email_obj["content"]
                 attempted_replies += 1
 
-                encoding = tiktoken.encoding_for_model("gpt-4-0125-preview")
+                encoding = tiktoken.encoding_for_model("gpt-4-turbo")
                 num_tokens = len(encoding.encode(text))
                 if num_tokens > 29000:
                     print("This email is too long")
