@@ -24,7 +24,6 @@ def calculate_success_rate(crawler_name, scraped_links, attempted_links, start_t
 
     crawl_id = f"{crawler_name}_{timestamp.replace(' ', '_').replace(':', '')}"
 
-    # Record the result for this specific crawl
     rate_results[crawl_id] = {
         "start_time": start_time,
         "end_time": timestamp,
@@ -55,7 +54,6 @@ def email_reply_rate(crawler_name, replied_emails, attempted_emails, start_time)
 
     crawl_id = f"{crawler_name}_{timestamp.replace(' ', '_').replace(':', '')}"
 
-    # Record the result for this specific crawl
     rate_results[crawl_id] = {
         "start_time": start_time,
         "end_time": timestamp,
