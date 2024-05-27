@@ -17,7 +17,7 @@ from secret import CRAWLER_PROG_DIR
 
 from fuzzywuzzy import process
 from selenium.webdriver.common.by import By
-from tqdm import tqdm
+from tqdm import tqdm # Displaying progress bar for easy tracking recognition progress
 from solution_manager import get_random_addr
 from responder.Message_Replier import investigator, newbies, bargainer, impatient_consumer
 from rate_calculate.calculator import calculate_success_rate
@@ -32,23 +32,25 @@ chrome_options = Options()
 chrome_options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
 driver_path = 'C:/Program Files/Google/Chrome/Application/chromedriver.exe'
 service = Service(executable_path=driver_path)
-driver = webdriver.Chrome(service=service, options=chrome_options)
+driver = webdriver.Chrome(service=service, options=chrome_options) # Browser will use the specified chrome service and options when it launches
 
 sol_index = 0
 sols = [investigator, newbies, bargainer, impatient_consumer]
 
+# Intercepting XMLHttpRequest (XHR) calls, JavaScript code injected into the browser as follows:
 jsScript = """
 (function() {
+    // store the original send and open methods of the XMLHttpRequest prototype: the original functionality remains intact and can be called
     var originalSend = XMLHttpRequest.prototype.send;
     var originalOpen = XMLHttpRequest.prototype.open;
 
-    XMLHttpRequest.prototype.open = function(method, url) {
+    XMLHttpRequest.prototype.open = function(method, url) {//Override the open method: capture HTTP method and URL of the XHR request and store in the 'this' context 
         this._method = method;
         this._url = url;
         return originalOpen.apply(this, arguments);
     };
 
-    XMLHttpRequest.prototype.send = function(body) {
+    XMLHttpRequest.prototype.send = function(body) { //Override the send method: capture the request body and store it in this._body
         this._body = JSON.stringify(body); // Keep a copy of the request body
 
         this.onreadystatechange = () => {
@@ -64,7 +66,7 @@ jsScript = """
                 };
                 var existingData = JSON.parse(localStorage.getItem('interceptedData') || '[]');
                 existingData.push(data);
-                localStorage.setItem('interceptedData', JSON.stringify(existingData));
+                localStorage.setItem('interceptedData', JSON.stringify(existingData)); // accumulate all intercepted XHR call data in localStorage
             }
         };
         return originalSend.apply(this, arguments);
@@ -79,7 +81,7 @@ def get_parent_element(element):
     return parent_element
 
 
-def get_parent_element_text_iter(element, depth=2):
+def get_parent_element_text_iter(element, depth=2): # Recursively get the text content of an element's parent element
     if depth < 0:
         return ''
     parent_element = get_parent_element(element)
@@ -300,7 +302,7 @@ def filter_elements(max_depth=2):
             thread.start()
             threads.append(thread)
         for thread in tqdm(threads):
-            thread.join()
+            thread.join() # Waiting each thread to complete
 
         lst = []
         while not share_queue.empty():
@@ -309,7 +311,7 @@ def filter_elements(max_depth=2):
             result[key] = value
 
     except Exception as e:
-        traceback.print_exc()
+        traceback.print_exc() # Prints complete error stack info
         print(f"An error occurred while filtering elements: {e}")
 
     for key, value in result.items():
@@ -345,7 +347,7 @@ def parallel_worker(elements, key, value, max_depth, i, share_queue: queue.Queue
                     break
                 for c in bro_content:
                     if c is not None and len(c) > 0:
-                        score = process.extractOne(target_value.lower(), [c.lower()])[1]
+                        score = process.extractOne(target_value.lower(), [c.lower()])[1] # Calculate the similarity score between c and target_value
                         if score > 90:
                             attrs[name] = c
                             print(f"parent text: {c} / {target_value} with score {score}")
@@ -604,7 +606,7 @@ def autofill_form():
         submit_button = driver.find_element(By.CSS_SELECTOR,
                                             'button[type="submit"], input[type="submit"]')
         if submit_button:
-            driver.execute_script(jsScript)
+            driver.execute_script(jsScript) # Inject js code, intercept XHR requests made by the page, these details will be logged to the browser's console
             print("click button")
             submit_button.click()
             TIMEOUT = 10
@@ -625,7 +627,7 @@ def autofill_form():
             print("end for wait")
             if not submission_successful:
                 submission_successful = WebDriverWait(driver, 10).until(AnyOf(
-                    EC.url_changes(driver.current_url),
+                    EC.url_changes(driver.current_url), # Expected conditions
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thank you')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Thanks')]")),
                     EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'success')]")),
